@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
@@ -10,15 +10,38 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  // SI EL EMAIL YA EXISTE ROMPER
-  // SI PASA ALGO EXTRA ROMPER
   async create(infoUser: CreateUserDto): Promise<User> {
-    infoUser = {
-      ...infoUser,
-      password: await bcrypt.hash(infoUser.password, 10),
-    };
-    const createUser = new this.userModel(infoUser);
-    return await createUser.save();
+    try {
+      const existEmail = await this.userModel.findOne({
+        email: infoUser.email,
+      });
+      if (existEmail) {
+        throw new HttpException(
+          {
+            status: HttpStatus.CONFLICT,
+            error: 'Sorry, this email currently exists.',
+          },
+          HttpStatus.CONFLICT,
+        );
+      }
+      infoUser = {
+        ...infoUser,
+        password: await bcrypt.hash(infoUser.password, 10),
+      };
+      const createUser = new this.userModel(infoUser);
+      return await createUser.save();
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'An unexpected error occurred while creating the user.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   findAll() {
