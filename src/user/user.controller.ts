@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponse, UserData } from 'src/interfaces/user.interface';
+import { Response } from '../interfaces/response.interface';
 
 @Controller('user')
 export class UserController {
@@ -14,8 +23,8 @@ export class UserController {
   }
 
   @Get()
-  async findAll(): Promise<any> {
-    return await this.userService.findAll();
+  async findAll(@Query('page') page: string): Promise<Response> {
+    return await this.userService.findAll(+page);
   }
 
   @Get(':idUser')
