@@ -6,6 +6,8 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { UserResponse, UserData } from 'src/interfaces/user.interface';
+import { response } from 'src/utils/response.util';
+import { Response } from 'src/interfaces/response.interface';
 
 @Injectable()
 export class UserService {
@@ -50,8 +52,25 @@ export class UserService {
     }
   }
 
-  async findAll(): Promise<any> {
-    return await this.userModel.find().select('-password');
+  async findAll(page?: number): Promise<Response> {
+    try {
+      const results = await this.userModel.find().select('-password -__v');
+      if (!page) {
+        page = 1;
+      }
+      return response(results, page, 'user?');
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'An unexpected error occurred while search the user.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findOne(idUser: string): Promise<UserData> {
