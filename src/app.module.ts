@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserMiddleware } from './user/user.middleware';
 import { VideoModule } from './video/video.module';
 import { VideoMiddleware } from './video/video.middleware';
+import { LikeModule } from './like/like.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { VideoMiddleware } from './video/video.middleware';
     MongooseModule.forRoot('mongodb://localhost/appVideo'),
     UserModule,
     VideoModule,
+    LikeModule,
   ],
   controllers: [],
   providers: [],
