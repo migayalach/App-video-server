@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
@@ -8,27 +16,30 @@ export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   @Post()
-  create(@Body() createVideoDto: CreateVideoDto) {
-    return this.videoService.create(createVideoDto);
+  async create(@Body() infoVideo: CreateVideoDto): Promise<any> {
+    return await this.videoService.create(infoVideo);
   }
 
   @Get()
-  findAll() {
-    return this.videoService.findAll();
+  async findAll(): Promise<any> {
+    return await this.videoService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.videoService.findOne(+id);
+  @Get(':idVideo')
+  async findOne(@Param('idVideo') idVideo: string): Promise<any> {
+    return await this.videoService.findOne(idVideo);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVideoDto: UpdateVideoDto) {
-    return this.videoService.update(+id, updateVideoDto);
+  @Patch(':idVideo')
+  async update(
+    @Param('idVideo') idVideo: string,
+    @Body() infoVideo: UpdateVideoDto,
+  ): Promise<any> {
+    return await this.videoService.update(idVideo, infoVideo);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.videoService.remove(+id);
+  @Delete(':idVideo')
+  async remove(@Param('idVideo') idVideo: string): Promise<any> {
+    return await this.videoService.remove(idVideo);
   }
 }
