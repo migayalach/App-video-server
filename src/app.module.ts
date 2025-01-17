@@ -9,6 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UserMiddleware } from './user/user.middleware';
 import { VideoModule } from './video/video.module';
+import { VideoMiddleware } from './video/video.middleware';
 
 @Module({
   imports: [
@@ -26,5 +27,9 @@ export class AppModule implements NestModule {
       .apply(UserMiddleware)
       .exclude({ path: 'user', method: RequestMethod.GET })
       .forRoutes('user');
+    consumer
+      .apply(VideoMiddleware)
+      .exclude({ path: 'video', method: RequestMethod.GET })
+      .forRoutes('video');
   }
 }
