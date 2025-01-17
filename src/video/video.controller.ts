@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
@@ -21,8 +22,8 @@ export class VideoController {
   }
 
   @Get()
-  async findAll(): Promise<any> {
-    return await this.videoService.findAll();
+  async findAll(@Query('page') page: string): Promise<any> {
+    return await this.videoService.findAll(+page);
   }
 
   @Get(':idVideo')
