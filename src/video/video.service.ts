@@ -4,23 +4,23 @@ import { UpdateVideoDto } from './dto/update-video.dto';
 
 @Injectable()
 export class VideoService {
-  create(createVideoDto: CreateVideoDto) {
-    return 'This action adds a new video';
+  async create(infoVideo: CreateVideoDto) {
+    return await 'This action adds a new video';
   }
 
-  findAll() {
-    return `This action returns all video`;
+  async findAll() {
+    return await `This action returns all video`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} video`;
+  async findOne(id: string) {
+    return await `This action returns a #${id} video`;
   }
 
-  update(id: number, updateVideoDto: UpdateVideoDto) {
-    return `This action updates a #${id} video`;
+  async update(id: string, infoVideo: UpdateVideoDto) {
+    return await `This action updates a #${id} video`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} video`;
+  async remove(id: string) {
+    return await `This action removes a #${id} video`;
   }
 }
