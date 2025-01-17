@@ -18,6 +18,9 @@ export class Video extends Document {
 
   @Prop({ default: VideoState.Publish })
   stateVideo: VideoState;
+
+  @Prop({ default: Date.now })
+  dateCreate: Date;
 }
 
 export const VideoSchema = SchemaFactory.createForClass(Video);
