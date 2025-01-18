@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 
@@ -12,12 +20,15 @@ export class LikeController {
   }
 
   @Get(':idUser')
-  async findOne(@Param('idUser') idUser: string): Promise<any> {
-    return await this.likeService.findOne(idUser);
+  async findOne(
+    @Param('idUser') idUser: string,
+    @Query('page') page: string,
+  ): Promise<any> {
+    return await this.likeService.findOne(idUser, +page);
   }
 
-  @Delete(':idVideo')
-  async remove(@Param('idVideo') idVideo: string): Promise<any> {
-    return await this.likeService.remove(idVideo);
+  @Delete(':idLike')
+  async remove(@Param('idLike') idLike: string): Promise<any> {
+    return await this.likeService.remove(idLike);
   }
 }
