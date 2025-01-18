@@ -11,6 +11,7 @@ import { UserMiddleware } from './user/user.middleware';
 import { VideoModule } from './video/video.module';
 import { VideoMiddleware } from './video/video.middleware';
 import { LikeModule } from './like/like.module';
+import { LikeMiddleware } from './like/like.middleware';
 
 @Module({
   imports: [
@@ -33,5 +34,9 @@ export class AppModule implements NestModule {
       .apply(VideoMiddleware)
       .exclude({ path: 'video', method: RequestMethod.GET })
       .forRoutes('video');
+    consumer
+      .apply(LikeMiddleware)
+      .exclude({ path: 'like', method: RequestMethod.GET })
+      .forRoutes('like');
   }
 }
