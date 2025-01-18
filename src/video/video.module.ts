@@ -10,6 +10,7 @@ import { UserModule } from 'src/user/user.module';
     UserModule,
     MongooseModule.forFeature([{ name: Video.name, schema: VideoSchema }]),
   ],
+  exports: [VideoService],
   controllers: [VideoController],
   providers: [VideoService],
 })
