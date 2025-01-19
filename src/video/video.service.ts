@@ -8,7 +8,10 @@ import { Video } from './schemas/video.schema';
 import { Model, Types } from 'mongoose';
 import { clearResVideos, clearVideoRes } from 'src/utils/clearResponse.util';
 import { response } from 'src/utils/response.util';
-import { VideoResponse } from 'src/interfaces/video.interface';
+import {
+  VideoResponse,
+  VideoResponseClear,
+} from 'src/interfaces/video.interface';
 import { Response } from 'src/interfaces/response.interface';
 
 @Injectable()
@@ -75,7 +78,7 @@ export class VideoService {
     }
   }
 
-  async findOne(idVideo: string): Promise<any> {
+  async findOne(idVideo: string): Promise<VideoResponseClear> {
     try {
       const videoInfo = await this.videoModel.findById(idVideo).select('-__v');
       if (!videoInfo) {
