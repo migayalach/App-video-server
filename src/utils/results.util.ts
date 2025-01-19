@@ -1,10 +1,11 @@
 import { UserData } from 'src/interfaces/user.interface';
 import { elements } from '../../constants';
+import { VideoData } from 'src/interfaces/video.interface';
 
 export const results = (
   data: Array<object>,
   limit: number,
-): Array<UserData> => {
+): Array<UserData | VideoData> => {
   if (limit === 1) {
     return operation(data, 0, elements - 1);
   } else {
