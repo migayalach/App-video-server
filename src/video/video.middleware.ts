@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
+import { VideoReqBodyPatch } from 'src/interfaces/middlewares.interface';
 
 export function VideoMiddleware(
-  request: Request,
+  request: Request<object, object, VideoReqBodyPatch>,
   response: Response,
   next: NextFunction,
 ) {
