@@ -6,7 +6,7 @@ import { Model, Types } from 'mongoose';
 import { Like } from './schemas/like.schema';
 import { UserService } from 'src/user/user.service';
 import { VideoService } from 'src/video/video.service';
-import { clearListVideo } from 'src/utils/clearResponse.util';
+import { clearListVideoLike } from 'src/interfaces/like.interface';
 import { response } from 'src/utils/response.util';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class LikeService {
     private videoService: VideoService,
   ) {}
 
-  async create(infoLike: CreateLikeDto) {
+  async create(infoLike: CreateLikeDto): Promise<any> {
     try {
       await this.userService.findOne(infoLike.idUser.toString());
       await this.videoService.findOne(infoLike.idVideo.toString());
@@ -57,7 +57,7 @@ export class LikeService {
     }
   }
 
-  async findOne(idUser: string, page?: number) {
+  async findOne(idUser: string, page?: number): Promise<any> {
     try {
       if (!page) {
         page = 1;
@@ -71,7 +71,7 @@ export class LikeService {
           model: 'Video',
           select: '_id idUser nameVideo description url stateVideo dateCreate',
         });
-      return response(clearListVideo(listVideo), page, `like/${idUser}?`);
+      return response(clearListVideoLike(listVideo), page, `like/${idUser}?`);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -86,7 +86,7 @@ export class LikeService {
     }
   }
 
-  async remove(idLike: string) {
+  async remove(idLike: string): Promise<any> {
     try {
       const data = await this.likeModel
         .findById({
