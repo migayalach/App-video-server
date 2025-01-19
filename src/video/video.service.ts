@@ -8,6 +8,8 @@ import { Video } from './schemas/video.schema';
 import { Model, Types } from 'mongoose';
 import { clearResVideos, clearVideoRes } from 'src/utils/clearResponse.util';
 import { response } from 'src/utils/response.util';
+import { VideoResponse } from 'src/interfaces/video.interface';
+import { Response } from 'src/interfaces/response.interface';
 
 @Injectable()
 export class VideoService {
@@ -15,7 +17,7 @@ export class VideoService {
     @InjectModel(Video.name) private videoModel: Model<Video>,
     private useSevice: UserService,
   ) {}
-  async create(infoVideo: CreateVideoDto) {
+  async create(infoVideo: CreateVideoDto): Promise<VideoResponse> {
     try {
       await this.useSevice.findOne(infoVideo.idUser.toString());
       if (await this.videoModel.findOne({ nameVideo: infoVideo.nameVideo })) {
@@ -49,7 +51,7 @@ export class VideoService {
     }
   }
 
-  async findAll(page?: number) {
+  async findAll(page?: number): Promise<Response> {
     try {
       const results = clearResVideos(
         await this.videoModel.find().select('-__v'),
@@ -73,7 +75,7 @@ export class VideoService {
     }
   }
 
-  async findOne(idVideo: string) {
+  async findOne(idVideo: string): Promise<any> {
     try {
       const videoInfo = await this.videoModel.findById(idVideo).select('-__v');
       if (!videoInfo) {
@@ -100,7 +102,10 @@ export class VideoService {
     }
   }
 
-  async update(idVideo: string, infoVideo: UpdateVideoDto) {
+  async update(
+    idVideo: string,
+    infoVideo: UpdateVideoDto,
+  ): Promise<VideoResponse> {
     try {
       await this.findOne(idVideo);
       const updateVideo = {
@@ -132,7 +137,7 @@ export class VideoService {
     }
   }
 
-  async remove(idVideo: string) {
+  async remove(idVideo: string): Promise<VideoResponse> {
     try {
       await this.findOne(idVideo);
       return {
