@@ -12,6 +12,7 @@ import { VideoModule } from './video/video.module';
 import { VideoMiddleware } from './video/video.middleware';
 import { LikeModule } from './like/like.module';
 import { LikeMiddleware } from './like/like.middleware';
+import { FollowModule } from './follow/follow.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LikeMiddleware } from './like/like.middleware';
     UserModule,
     VideoModule,
     LikeModule,
+    FollowModule,
   ],
   controllers: [],
   providers: [],
