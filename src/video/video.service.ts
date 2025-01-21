@@ -57,7 +57,7 @@ export class VideoService {
   async findAll(page?: number): Promise<Response> {
     try {
       const results = clearResVideos(
-        await this.videoModel.find().select('-__v'),
+        await this.videoModel.find({ stateVideo: true }).select('-__v'),
       );
       if (!page) {
         page = 1;
