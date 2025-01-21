@@ -54,7 +54,16 @@ export class UserService {
 
   async findAll(page?: number): Promise<Response> {
     try {
-      const results = await this.userModel.find().select('-password -__v');
+      const results = (
+        await this.userModel.find().select('-password -__v')
+      ).map(({ _id, name, email, follow }) => {
+        return {
+          idUser: _id.toString(),
+          name,
+          email,
+          follow,
+        };
+      });
       if (!page) {
         page = 1;
       }
