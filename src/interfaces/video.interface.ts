@@ -17,7 +17,7 @@ export interface VideoData {
 }
 
 export interface VideoInfo {
-  _id: string | ObjectId;
+  _id: string | ObjectId | unknown;
   idUser: string | ObjectId;
   nameVideo: string;
   description: string;
