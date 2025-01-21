@@ -6,8 +6,10 @@ import { Model, Types } from 'mongoose';
 import { Like } from './schemas/like.schema';
 import { UserService } from 'src/user/user.service';
 import { VideoService } from 'src/video/video.service';
-import { clearListVideoLike } from 'src/interfaces/like.interface';
 import { response } from 'src/utils/response.util';
+import { VideoResponse } from 'src/interfaces/video.interface';
+import { Response } from 'src/interfaces/response.interface';
+import { clearListVideoLike } from 'src/utils/clearResponse.util';
 
 @Injectable()
 export class LikeService {
@@ -17,7 +19,7 @@ export class LikeService {
     private videoService: VideoService,
   ) {}
 
-  async create(infoLike: CreateLikeDto): Promise<any> {
+  async create(infoLike: CreateLikeDto): Promise<VideoResponse> {
     try {
       await this.userService.findOne(infoLike.idUser.toString());
       await this.videoService.findOne(infoLike.idVideo.toString());
@@ -57,22 +59,31 @@ export class LikeService {
     }
   }
 
-  async findOne(idUser: string, page?: number): Promise<any> {
+  async findOne(idUser: string, page?: number): Promise<Response> {
     try {
       if (!page) {
         page = 1;
       }
       await this.userService.findOne(idUser.toString());
       const listVideo = await this.likeModel
-        .find({ idUser: new Types.ObjectId(idUser) })
-        .select('-idUser -__v')
-        .populate({
-          path: 'idVideo',
-          model: 'Video',
-          select: '_id idUser nameVideo description url stateVideo dateCreate',
-        });
-      return response(clearListVideoLike(listVideo), page, `like/${idUser}?`);
+        .find({
+          idUser: new Types.ObjectId(idUser),
+        })
+        .select('-idUser -__v');
+
+      const data = [];
+      for (let i = 0; i < listVideo.length; i++) {
+        const obj = { _id: '', idVideo: {} };
+        obj._id = listVideo[i]._id.toString();
+        obj.idVideo = await this.videoService.findOne(
+          listVideo[i].idVideo.toString(),
+        );
+        data.push(obj);
+      }
+      return response(clearListVideoLike(data), page, `like/${idUser}?`);
     } catch (error) {
+      console.log(error);
+
       if (error instanceof HttpException) {
         throw error;
       }
@@ -86,7 +97,7 @@ export class LikeService {
     }
   }
 
-  async remove(idLike: string): Promise<any> {
+  async remove(idLike: string): Promise<VideoResponse> {
     try {
       const data = await this.likeModel
         .findById({
