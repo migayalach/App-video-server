@@ -1,3 +1,4 @@
+import { Follow } from 'src/enums/follow.enum';
 import { VideoState } from 'src/enums/video.enum';
 
 export interface UserRequestBody {
@@ -17,4 +18,10 @@ export interface VideoReqBodyPatch {
   nameVideo: string;
   url: string;
   stateVideo: VideoState;
+}
+
+export interface FollowReqBody {
+  idUser: string;
+  idCreador: string;
+  option: Follow;
 }
