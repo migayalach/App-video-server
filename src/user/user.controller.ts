@@ -49,7 +49,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while creating the user.',
+    description: 'An unexpected error occurred while searching for the user.',
   })
   async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
     return await this.userService.create(createUserDto);
@@ -67,7 +67,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 200,
-    description: 'User successfully created',
+    description: 'User pagination and response',
     schema: {
       example: {
         info: {
@@ -95,7 +95,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while creating the user.',
+    description: 'An unexpected error occurred.',
   })
   async findAll(@Query('page') page: string): Promise<Response> {
     return await this.userService.findAll(+page);
@@ -112,7 +112,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 201,
-    description: 'User successfully created',
+    description: 'The user has been obtained successfully',
     schema: {
       example: {
         idUser: '678726a888a21c3097b5c5d1',
@@ -123,11 +123,11 @@ export class UserController {
   })
   @ApiResponse({
     status: 404,
-    description: "Sorry, this user don't exists.",
+    description: "Sorry, this user doesn't exists.",
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while creating the user.',
+    description: 'An unexpected error occurred while searching for the user.',
   })
   async findOne(@Param('idUser') idUser: string): Promise<UserData> {
     return await this.userService.findOne(idUser);
@@ -143,7 +143,7 @@ export class UserController {
     example: '678726a888a21c3097b5c5d1',
   })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'User successfully updated',
     schema: {
       example: {
@@ -158,11 +158,11 @@ export class UserController {
   })
   @ApiResponse({
     status: 404,
-    description: "Sorry, this user don't exists.",
+    description: "Sorry, this user doesn't exists.",
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while creating the user.',
+    description: 'An unexpected error occurred while searching for the user.',
   })
   async update(
     @Param('idUser') idUser: string,
