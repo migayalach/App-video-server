@@ -6,6 +6,8 @@ import { User } from 'src/user/schemas/user.schema';
 import { Model, Types } from 'mongoose';
 import { response } from 'src/utils/response.util';
 import { Follow } from 'src/enums/follow.enum';
+import { Response } from 'src/interfaces/response.interface';
+import { FollowResponse } from 'src/interfaces/follow.interface';
 
 @Injectable()
 export class FollowService {
@@ -14,7 +16,7 @@ export class FollowService {
     private userService: UserService,
   ) {}
 
-  async create(dataFollow: CreateFollowDto) {
+  async create(dataFollow: CreateFollowDto): Promise<FollowResponse> {
     try {
       await this.userService.findOne(dataFollow.idUser.toString());
       await this.userService.findOne(dataFollow.idCreador.toString());
@@ -63,7 +65,7 @@ export class FollowService {
     }
   }
 
-  async findAll(idUser: string, page?: number) {
+  async findAll(idUser: string, page?: number): Promise<Response> {
     try {
       if (!page) {
         page = 1;
