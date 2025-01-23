@@ -85,7 +85,7 @@ export class VideoService {
         throw new HttpException(
           {
             status: HttpStatus.NOT_FOUND,
-            message: "Sorry this video don't exist",
+            message: "Sorry this video doesn't exist",
           },
           HttpStatus.NOT_FOUND,
         );
