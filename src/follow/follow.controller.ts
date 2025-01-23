@@ -2,6 +2,8 @@ import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
 import { FollowService } from './follow.service';
 import { CreateFollowDto } from './dto/create-follow.dto';
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { FollowResponse } from 'src/interfaces/follow.interface';
+import { Response } from 'src/interfaces/response.interface';
 
 @Controller('follow')
 export class FollowController {
@@ -52,7 +54,10 @@ export class FollowController {
     status: 500,
     description: 'An unexpected error occurred while searching for the video.',
   })
-  async findAll(@Param('idUser') idUser: string, @Query('page') page: string) {
+  async findAll(
+    @Param('idUser') idUser: string,
+    @Query('page') page: string,
+  ): Promise<Response> {
     return await this.followService.findAll(idUser, +page);
   }
 
@@ -99,7 +104,7 @@ export class FollowController {
     status: 409,
     description: 'Sorry, you are already following this creator',
   })
-  async create(@Body() dataFollow: CreateFollowDto): Promise<any> {
+  async create(@Body() dataFollow: CreateFollowDto): Promise<FollowResponse> {
     return await this.followService.create(dataFollow);
   }
 }
