@@ -25,3 +25,8 @@ export interface FollowReqBody {
   idCreador: string;
   option: Follow;
 }
+
+export interface LoginData {
+  email: string;
+  password: string;
+}
