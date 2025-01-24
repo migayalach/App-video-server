@@ -15,6 +15,7 @@ import { LikeMiddleware } from './like/like.middleware';
 import { FollowModule } from './follow/follow.module';
 import { FollowMiddleware } from './follow/follow.middleware';
 import { LoginModule } from './login/login.module';
+import { LoginMiddleware } from './login/login.middleware';
 
 @Module({
   imports: [
@@ -47,5 +48,6 @@ export class AppModule implements NestModule {
       .apply(FollowMiddleware)
       .exclude({ path: 'follow', method: RequestMethod.GET })
       .forRoutes('follow');
+    consumer.apply(LoginMiddleware).forRoutes('login');
   }
 }
