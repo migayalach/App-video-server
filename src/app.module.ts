@@ -16,7 +16,6 @@ import { FollowModule } from './follow/follow.module';
 import { FollowMiddleware } from './follow/follow.middleware';
 import { LoginModule } from './login/login.module';
 import { LoginMiddleware } from './login/login.middleware';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,7 +26,6 @@ import { AuthModule } from './auth/auth.module';
     LikeModule,
     FollowModule,
     LoginModule,
-    AuthModule,
   ],
   controllers: [],
   providers: [],
