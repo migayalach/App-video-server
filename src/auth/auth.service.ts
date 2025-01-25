@@ -13,7 +13,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(infoLogin: LoginDto) {
+  async signIn(infoLogin: LoginDto): Promise<any> {
     try {
       const user = await this.userModel.findOne({ email: infoLogin.email });
       if (!user) {
@@ -32,6 +32,9 @@ export class AuthService {
 
       const payload = { username: user.name, sub: user._id };
       return {
+        access: true,
+        idUser: user._id.toString(),
+        nameUser: user.name,
         access_token: await this.jwtService.signAsync(payload),
       };
     } catch (error) {
