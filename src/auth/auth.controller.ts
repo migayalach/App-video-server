@@ -28,6 +28,7 @@ export class AuthController {
         access: true,
         idUser: '678e730e45b56f4dad365a3c',
         nameUser: 'Nicolas',
+        access_token: 'kpXVCJ9.eyJzdW.SflKxwRJS',
       },
     },
   })
@@ -59,7 +60,7 @@ export class AuthController {
     status: 500,
     description: 'An unexpected error occurred while searching for the user.',
   })
-  async signIn(@Body() infoLogin: LoginDto) {
+  async signIn(@Body() infoLogin: LoginDto): Promise<any> {
     return await this.authService.signIn(infoLogin);
   }
 
