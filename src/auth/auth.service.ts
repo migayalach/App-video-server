@@ -32,10 +32,12 @@ export class AuthService {
 
       const payload = { username: user.name, sub: user._id };
       return {
-        access: true,
         idUser: user._id.toString(),
         nameUser: user.name,
         access_token: await this.jwtService.signAsync(payload),
+        refresh_token: await this.jwtService.signAsync(payload, {
+          expiresIn: '7d',
+        }),
       };
     } catch (error) {
       if (error instanceof HttpException) {
