@@ -8,12 +8,46 @@ import * as bcrypt from 'bcrypt';
 import { UserResponse, UserData } from 'src/interfaces/user.interface';
 import { response } from 'src/utils/response.util';
 import { Response } from 'src/interfaces/response.interface';
+import { AuthToken } from 'src/auth/authToken';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private token: AuthToken,
+  ) {}
 
-  async create(infoUser: CreateUserDto): Promise<UserResponse> {
+  async emailExist(email: string, password: string) {
+    const user = await this.userModel.findOne({ email: email });
+    if (!user) {
+      throw new HttpException(
+        `Sorry, the email is not valid.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new HttpException(
+        `Sorry, the password is not valid.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const { access_token, refresh_token } = await this.token.generateToken(
+      user._id.toString(),
+      user.name,
+    );
+
+    await this.userModel.findByIdAndUpdate(user._id, { token: refresh_token });
+    return {
+      idUser: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      access_token,
+      refresh_token,
+    };
+  }
+
+  async create(infoUser: CreateUserDto): Promise<any> {
     try {
       const existEmail = await this.userModel.findOne({
         email: infoUser.email,
@@ -32,11 +66,19 @@ export class UserService {
         password: await bcrypt.hash(infoUser.password, 10),
       };
       const createUser = new this.userModel(infoUser);
-      const { _id } = await createUser.save();
-
+      const { _id, name } = await createUser.save();
+      const { access_token, refresh_token } = await this.token.generateToken(
+        _id.toString(),
+        name,
+      );
+      await this.userModel.findByIdAndUpdate(_id, { token: refresh_token });
       return {
         message: 'User created successfully',
         user: await this.findOne(_id as string),
+        token: {
+          access_token,
+          refresh_token,
+        },
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -126,6 +168,27 @@ export class UserService {
         message: 'User updated successfully',
         user: await this.findOne(idUser),
       };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'An unexpected error occurred while search the user.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async delete(idUser: string) {
+    try {
+      await this.findOne(idUser);
+      await this.userModel.findByIdAndUpdate(idUser, {
+        $unset: { token: '' },
+      });
+      return;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
