@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
@@ -14,12 +15,14 @@ import { UpdateVideoDto } from './dto/update-video.dto';
 import { VideoData, VideoResponse } from 'src/interfaces/video.interface';
 import { Response } from 'src/interfaces/response.interface';
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('video')
 export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   //!CREATE VIDEO
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Create new video' })
   @ApiResponse({
@@ -158,6 +161,7 @@ export class VideoController {
   }
 
   //!UPDATE VIDEO
+  @UseGuards(AuthGuard)
   @Patch(':idVideo')
   @ApiOperation({ summary: 'Update information video' })
   @ApiParam({
@@ -200,6 +204,7 @@ export class VideoController {
   }
 
   //!DELETE VIDEO
+  @UseGuards(AuthGuard)
   @Delete(':idVideo')
   @ApiOperation({ summary: 'Delete video information' })
   @ApiParam({
