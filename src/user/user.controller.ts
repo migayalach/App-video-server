@@ -54,7 +54,7 @@ export class UserController {
     status: 500,
     description: 'An unexpected error occurred while searching for the user.',
   })
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<any> {
     return await this.userService.create(createUserDto);
   }
 
