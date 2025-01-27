@@ -17,6 +17,7 @@ import { FollowMiddleware } from './follow/follow.middleware';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { AuthModule } from './auth/auth.module';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
+import { SignModule } from './sign/sign.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RefreshTokenModule } from './refresh-token/refresh-token.module';
     FollowModule,
     AuthModule,
     RefreshTokenModule,
+    SignModule,
   ],
   controllers: [],
   providers: [],
