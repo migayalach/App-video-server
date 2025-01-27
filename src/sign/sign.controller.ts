@@ -1,19 +1,24 @@
-import { Controller, Post, Body, Put } from '@nestjs/common';
+import { Controller, Post, Body, Put, Delete, Param } from '@nestjs/common';
 import { SignService } from './sign.service';
-import { CreateSignDto } from './dto/create-sign.dto';
-import { UpdateSignDto } from './dto/update-sign.dto';
+import { SignUpDto } from './dto/signUp.dto';
+import { SignInDto } from './dto/signIn.dto';
 
 @Controller('sign')
 export class SignController {
   constructor(private readonly signService: SignService) {}
 
   @Post('up')
-  create(@Body() createSignDto: CreateSignDto) {
-    return this.signService.create(createSignDto);
+  async create(@Body() infoUser: SignUpDto) {
+    return await this.signService.create(infoUser);
   }
 
   @Put('in')
-  update(@Body() updateSignDto: UpdateSignDto) {
-    return this.signService.update(updateSignDto);
+  async update(@Body() infoUser: SignInDto) {
+    return await this.signService.update(infoUser);
+  }
+
+  @Delete('out/:idUser')
+  async remove(@Param('idUser') idUser: string) {
+    return await this.signService.delete(idUser);
   }
 }
