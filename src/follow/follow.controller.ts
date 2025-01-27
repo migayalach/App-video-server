@@ -1,15 +1,25 @@
-import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Get,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { FollowService } from './follow.service';
 import { CreateFollowDto } from './dto/create-follow.dto';
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { FollowResponse } from 'src/interfaces/follow.interface';
 import { Response } from 'src/interfaces/response.interface';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('follow')
 export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
   //!GET ALL FOLLOWERS
+  @UseGuards(AuthGuard)
   @Get(':idUser')
   @ApiOperation({ summary: 'Get the list follow of users' })
   @ApiParam({
@@ -62,6 +72,7 @@ export class FollowController {
   }
 
   //!CREATE FOLLOW AND UNFOLLOW CREATOR
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Follow or Unfollow user' })
   @ApiResponse({
