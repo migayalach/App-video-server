@@ -6,18 +6,21 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { VideoResponse } from 'src/interfaces/video.interface';
 import { Response } from 'src/interfaces/response.interface';
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('like')
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   //!CREATE LIKE
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Create new like video' })
   @ApiResponse({
@@ -75,6 +78,7 @@ export class LikeController {
   }
 
   //!GET LIST OF VIDEOS USERS LIKE
+  @UseGuards(AuthGuard)
   @Get(':idUser')
   @ApiOperation({ summary: 'Get the list like of users videos' })
   @ApiParam({
@@ -173,6 +177,7 @@ export class LikeController {
   }
 
   //!DELETE LIKE
+  @UseGuards(AuthGuard)
   @Delete(':idLike')
   @ApiOperation({ summary: 'Delete like video of list the user' })
   @ApiParam({
