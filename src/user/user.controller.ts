@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,12 +20,14 @@ import {
   ApiQuery,
   ApiResponse,
 } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // !CREATE USER
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Create new user' })
   @ApiBody({ type: CreateUserDto, description: 'User creation data' })
@@ -56,6 +59,7 @@ export class UserController {
   }
 
   // !GET ALL USER
+  @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: 'Get list user' })
   @ApiQuery({
@@ -102,6 +106,7 @@ export class UserController {
   }
 
   // !GET IDUSER INFORMATION
+  @UseGuards(AuthGuard)
   @Get(':idUser')
   @ApiOperation({ summary: 'Get user information' })
   @ApiParam({
@@ -134,6 +139,7 @@ export class UserController {
   }
 
   // !UPDATE PERSONAL INFORMATION
+  @UseGuards(AuthGuard)
   @Patch(':idUser')
   @ApiOperation({ summary: 'Update personal information user' })
   @ApiParam({
