@@ -14,7 +14,11 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('app-video', app, documentFactory);
   app.setGlobalPrefix('app-video');
-  app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost:3001', 'https://miapp.vercel.app'],
+    methods: 'GET, POST, PUT, DELETE, PATCH',
+    allowedHeaders: 'Authorization, Content-Type',
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
