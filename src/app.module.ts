@@ -17,6 +17,7 @@ import { FollowMiddleware } from './follow/follow.middleware';
 // import { AuthMiddleware } from './auth/auth.middleware';
 import { AuthModule } from './auth/auth.module';
 import { SignModule } from './sign/sign.module';
+import { InitialSeederService } from './seeders/initial-seeder.service';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { SignModule } from './sign/sign.module';
     SignModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [InitialSeederService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
