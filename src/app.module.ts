@@ -14,10 +14,8 @@ import { LikeModule } from './like/like.module';
 import { LikeMiddleware } from './like/like.middleware';
 import { FollowModule } from './follow/follow.module';
 import { FollowMiddleware } from './follow/follow.middleware';
-// import { AuthMiddleware } from './auth/auth.middleware';
 import { AuthModule } from './auth/auth.module';
 import { SignModule } from './sign/sign.module';
-import { InitialSeederService } from './seeders/initial-seeder.service';
 
 @Module({
   imports: [
@@ -31,7 +29,7 @@ import { InitialSeederService } from './seeders/initial-seeder.service';
     SignModule,
   ],
   controllers: [],
-  providers: [InitialSeederService],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -51,6 +49,5 @@ export class AppModule implements NestModule {
       .apply(FollowMiddleware)
       .exclude({ path: 'follow', method: RequestMethod.GET })
       .forRoutes('follow');
-    // consumer.apply(AuthMiddleware).forRoutes('auth');
   }
 }
