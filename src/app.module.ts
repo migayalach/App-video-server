@@ -17,6 +17,9 @@ import { FollowMiddleware } from './follow/follow.middleware';
 import { AuthModule } from './auth/auth.module';
 import { SignModule } from './sign/sign.module';
 import { SeederModule } from './seeders/seed.module.module';
+import { DownloadModule } from './download/download.module';
+import { AuditModule } from './audit/audit.module';
+import { RankingModule } from './ranking/ranking.module';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { SeederModule } from './seeders/seed.module.module';
     AuthModule,
     SignModule,
     SeederModule,
+    DownloadModule,
+    AuditModule,
+    RankingModule,
   ],
   controllers: [],
   providers: [],
