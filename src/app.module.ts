@@ -16,6 +16,7 @@ import { FollowModule } from './follow/follow.module';
 import { FollowMiddleware } from './follow/follow.middleware';
 import { AuthModule } from './auth/auth.module';
 import { SignModule } from './sign/sign.module';
+import { SeederModule } from './seeders/seed.module.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SignModule } from './sign/sign.module';
     FollowModule,
     AuthModule,
     SignModule,
+    SeederModule,
   ],
   controllers: [],
   providers: [],
