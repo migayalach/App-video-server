@@ -2,9 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SeederService } from './seeders/initial-seeder.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const seederService = app.get(SeederService);
+  await seederService.seed();
   const config = new DocumentBuilder()
     .setTitle('Server video')
     .setDescription('The server video API')
