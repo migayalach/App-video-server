@@ -22,7 +22,7 @@ export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   //!CREATE VIDEO
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Create new video' })
   @ApiResponse({
