@@ -3,6 +3,7 @@ import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
 import { HttpStatus, HttpException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
+import { RankingService } from 'src/ranking/ranking.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Video } from './schemas/video.schema';
 import { Model, Types } from 'mongoose';
@@ -19,6 +20,7 @@ export class VideoService {
   constructor(
     @InjectModel(Video.name) private videoModel: Model<Video>,
     private useSevice: UserService,
+    private rankingService: RankingService,
   ) {}
   async create(infoVideo: CreateVideoDto): Promise<VideoResponse> {
     try {
@@ -36,9 +38,14 @@ export class VideoService {
         ...infoVideo,
         idUser: new Types.ObjectId(infoVideo.idUser),
       });
+      const videoData = await createVideo.save();
+      await this.rankingService.create({
+        idVideo: new Types.ObjectId(videoData._id.toString()),
+      });
+
       return {
         message: 'Video created successfully',
-        video: clearVideoRes(await createVideo.save()),
+        video: clearVideoRes(videoData),
       };
     } catch (error) {
       if (error instanceof HttpException) {
