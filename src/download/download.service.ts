@@ -1,26 +1,101 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDownloadDto } from './dto/create-download.dto';
-import { UpdateDownloadDto } from './dto/update-download.dto';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { exec } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class DownloadService {
-  create(createDownloadDto: CreateDownloadDto) {
-    return 'This action adds a new download';
-  }
+  // Method to download video/audio based on URL, quality, and format
+  async downloadVideo(url: string, quality: string, format: string) {
+    // Define the folder to save downloaded files (Desktop in this case)
+    const downloadFolder = path.join(process.env.HOME, 'Escritorio', 'videos');
 
-  findAll() {
-    return `This action returns all download`;
-  }
+    // Check if the download folder exists, if not, create it
+    if (!fs.existsSync(downloadFolder)) {
+      fs.mkdirSync(downloadFolder, { recursive: true });
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} download`;
-  }
+    // Get the video title using yt-dlp
+    const infoCommand = `yt-dlp --get-title ${url}`;
 
-  update(id: number, updateDownloadDto: UpdateDownloadDto) {
-    return `This action updates a #${id} download`;
-  }
+    exec(infoCommand, (err, stdout, stderr) => {
+      // If an error occurs while getting video info, throw an HTTP exception
+      if (err || stderr) {
+        console.error('Error getting video title:', err || stderr);
+        throw new HttpException(
+          'Error getting video title',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
-  remove(id: number) {
-    return `This action removes a #${id} download`;
+      // Clean up the video title (remove extra spaces and invalid characters)
+      const videoTitle = stdout.trim(); // Remove extra spaces
+
+      // Ensure the file name is safe (no invalid characters like slashes)
+      const safeVideoTitle = videoTitle
+        .replace(/[\/:*?"<>|]/g, '') // Remove invalid characters
+        .replace(/\s+/g, '_'); // Replace spaces with underscores
+
+      // Define the output path for the downloaded file
+      let outputPath = path.join(downloadFolder, `${safeVideoTitle}`);
+
+      // Set the file extension based on the selected format (mp3 or mp4)
+      if (format === 'mp3') {
+        outputPath += '.mp3';
+      } else {
+        outputPath += '.mp4';
+      }
+
+      // Define video format based on the selected quality
+      let videoFormat = '';
+      if (quality === '144p') videoFormat = 'worstvideo+worstaudio';
+      else if (quality === '360p')
+        videoFormat = 'bestaudio[ext=m4a]+bestvideo[height<=360]/mp4';
+      else if (quality === '480p')
+        videoFormat = 'bestaudio[ext=m4a]+bestvideo[height<=480]/mp4';
+      else if (quality === '720p')
+        videoFormat = 'bestaudio[ext=m4a]+bestvideo[height<=720]/mp4';
+      else if (quality === '1080p')
+        videoFormat = 'bestaudio[ext=m4a]+bestvideo[height<=1080]/mp4';
+      else videoFormat = 'bestvideo+bestaudio';
+
+      // Define audio bitrate based on the selected quality
+      let audioBitrate = '192k'; // Default value for audio quality
+      if (quality === 'low') audioBitrate = '128k';
+      else if (quality === 'high') audioBitrate = '256k';
+      else if (quality === 'best') audioBitrate = '320k';
+
+      try {
+        let command = '';
+
+        // If the format is MP3, use audio extraction with the specified bitrate
+        if (format === 'mp3') {
+          command = `yt-dlp -f bestaudio[ext=m4a] --extract-audio --audio-quality ${audioBitrate} --audio-format mp3 -o "${outputPath}" ${url}`;
+        } else {
+          // If the format is not MP3, use the selected video format
+          command = `yt-dlp -f "${videoFormat}" --merge-output-format mp4 -o "${outputPath}" ${url}`;
+        }
+
+        // Execute the download command
+        exec(command, (err, stdout, stderr) => {
+          // Handle any errors that occur during the download
+          if (err || stderr) {
+            console.error('Error downloading the file:', err || stderr);
+            throw new HttpException(
+              'Error downloading the file',
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
+          console.log('File downloaded successfully!', stdout);
+        });
+      } catch (err) {
+        // Catch any unexpected errors during the process
+        console.error('An error occurred:', err.message);
+        throw new HttpException(
+          'Error downloading the file',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    });
   }
 }
