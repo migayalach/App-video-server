@@ -1,8 +1,8 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateRankingDto } from './create-ranking.dto';
+import { PartialType } from '@nestjs/mapped-types';
 import { Types } from 'mongoose';
 import { IsMongoId, IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { CreateRankingDto } from './create-ranking.dto';
 
 export class UpdateRankingDto extends PartialType(CreateRankingDto) {
   @IsMongoId()
