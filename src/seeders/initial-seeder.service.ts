@@ -4,12 +4,14 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { Video } from 'src/video/schemas/video.schema';
+import { Ranking } from 'src/ranking/schema/ranking.schema';
 
 @Injectable()
 export class SeederService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Video.name) private videoModel: Model<Video>,
+    @InjectModel(Ranking.name) private rankingModel: Model<Ranking>,
   ) {}
 
   async seed() {
@@ -122,7 +124,11 @@ export class SeederService {
           { ...videos[8], idUser: user4 },
           { ...videos[9], idUser: user4 },
         ];
-        await this.videoModel.insertMany(videosWithUser);
+        const insertedVideos = await this.videoModel.insertMany(videosWithUser);
+        const rankings = insertedVideos.map((video) => ({
+          idVideo: video._id,
+        }));
+        await this.rankingModel.insertMany(rankings);
         // console.log('Datos iniciales cargados');
       } catch (error) {
         console.error('Error al cargar los datos iniciales:', error);
