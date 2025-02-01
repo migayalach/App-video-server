@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
 import { RankingService } from './ranking.service';
 import { CreateRankingDto } from './dto/create-ranking.dto';
 import { UpdateRankingDto } from './dto/update-ranking.dto';
@@ -10,11 +10,6 @@ export class RankingController {
   @Post()
   async create(@Body() createRankingDto: CreateRankingDto) {
     return await this.rankingService.create(createRankingDto);
-  }
-
-  @Get()
-  async findAll() {
-    return await this.rankingService.findAll();
   }
 
   @Patch(':idRanking')
