@@ -7,10 +7,6 @@ import { CreateRankingDto } from './create-ranking.dto';
 export class UpdateRankingDto extends PartialType(CreateRankingDto) {
   @IsMongoId()
   @IsNotEmpty()
-  idRanking: Types.ObjectId;
-
-  @IsMongoId()
-  @IsNotEmpty()
   idUser: Types.ObjectId;
 
   @Transform(({ value }) => Number(value))
