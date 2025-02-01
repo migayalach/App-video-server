@@ -20,6 +20,7 @@ import { SeederModule } from './seeders/seed.module.module';
 import { DownloadModule } from './download/download.module';
 import { AuditModule } from './audit/audit.module';
 import { RankingModule } from './ranking/ranking.module';
+import { FiltersModule } from './filters/filters.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { RankingModule } from './ranking/ranking.module';
     DownloadModule,
     AuditModule,
     RankingModule,
+    FiltersModule,
   ],
   controllers: [],
   providers: [],
