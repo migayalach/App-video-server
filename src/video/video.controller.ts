@@ -120,7 +120,7 @@ export class VideoController {
     status: 500,
     description: 'An unexpected error occurred.',
   })
-  async findAll(@Query('page') page: string): Promise<Response> {
+  async findAll(@Query('page') page: string): Promise<any> {
     return await this.videoService.findAll(+page);
   }
 
@@ -156,12 +156,12 @@ export class VideoController {
     status: 500,
     description: 'An unexpected error occurred while searching for the video.',
   })
-  async findOne(@Param('idVideo') idVideo: string): Promise<VideoData> {
+  async findOne(@Param('idVideo') idVideo: string): Promise<any> {
     return await this.videoService.findOne(idVideo);
   }
 
   //!UPDATE VIDEO
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Patch(':idVideo')
   @ApiOperation({ summary: 'Update information video' })
   @ApiParam({
@@ -199,12 +199,12 @@ export class VideoController {
   async update(
     @Param('idVideo') idVideo: string,
     @Body() infoVideo: UpdateVideoDto,
-  ): Promise<VideoResponse> {
+  ): Promise<any> {
     return await this.videoService.update(idVideo, infoVideo);
   }
 
   //!DELETE VIDEO
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Delete(':idVideo')
   @ApiOperation({ summary: 'Delete video information' })
   @ApiParam({
@@ -242,7 +242,7 @@ export class VideoController {
     status: 500,
     description: 'An unexpected error occurred while searching for the video.',
   })
-  async remove(@Param('idVideo') idVideo: string): Promise<VideoResponse> {
+  async remove(@Param('idVideo') idVideo: string): Promise<any> {
     return await this.videoService.remove(idVideo);
   }
 }
