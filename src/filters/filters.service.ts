@@ -5,7 +5,6 @@ import { Audit } from 'src/audit/schemas/audit.schema';
 import { VideoDelete } from 'src/enums/video.enum';
 import { VideoQuery } from 'src/interfaces/filters.interface';
 import { Ranking } from 'src/ranking/schema/ranking.schema';
-import { User } from 'src/user/schemas/user.schema';
 import { Video } from 'src/video/schemas/video.schema';
 import { response } from '../utils/response.util';
 
@@ -14,7 +13,6 @@ export class FiltersService {
   constructor(
     @InjectModel(Audit.name) private auditModel: Model<Audit>,
     @InjectModel(Video.name) private videoModel: Model<Video>,
-    @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Ranking.name) private rankingModel: Model<Ranking>,
   ) {}
 
