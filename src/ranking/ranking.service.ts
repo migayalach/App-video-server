@@ -14,6 +14,7 @@ export class RankingService {
   async create(infomation: CreateRankingDto) {
     try {
       const createRanking = new this.rankingModel({
+        idUser: new Types.ObjectId(infomation.idUser),
         idVideo: new Types.ObjectId(infomation.idVideo),
       });
       await createRanking.save();
