@@ -5,3 +5,14 @@ export const totalAverange = (listVotes) => {
   }
   return Math.round(average / listVotes.length);
 };
+
+export const dateSearch = (dateStart, dateEnd) => {
+  if (!dateStart) {
+  }
+  if (!dateEnd) {
+  }
+
+  console.log(new Date(dateStart), dateEnd);
+
+  return ':D';
+};
