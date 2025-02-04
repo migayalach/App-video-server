@@ -24,14 +24,18 @@ export interface VideoInfo {
   url: string;
   stateVideo: VideoState;
   dateCreate: Date;
+  isDelete: boolean | string;
 }
 
 export interface VideoResponseClear {
   idVideo: string;
   idUser: string;
+  idRanking: string;
   nameVideo: string;
   description: string;
   url: string;
   stateVideo: VideoState;
   dateCreate: Date;
+  average: number;
+  isDelete: boolean | string;
 }
