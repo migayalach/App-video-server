@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { VideoState } from 'src/enums/video.enum';
+import { VideoDelete, VideoState } from 'src/enums/video.enum';
 
 @Schema()
 export class Video extends Document {
@@ -18,6 +18,9 @@ export class Video extends Document {
 
   @Prop({ default: VideoState.Publish })
   stateVideo: VideoState;
+
+  @Prop({ default: VideoDelete.false })
+  isDelete: VideoDelete;
 
   @Prop({ default: Date.now })
   dateCreate: Date;
