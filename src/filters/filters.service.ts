@@ -1,12 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Audit } from 'src/audit/schemas/audit.schema';
 import { VideoDelete } from 'src/enums/video.enum';
+import { VideoQuery } from 'src/interfaces/filters.interface';
 import { Ranking } from 'src/ranking/schema/ranking.schema';
 import { User } from 'src/user/schemas/user.schema';
-import { dateSearch } from 'src/utils/operations.util';
 import { Video } from 'src/video/schemas/video.schema';
+import { response } from '../utils/response.util';
 
 @Injectable()
 export class FiltersService {
@@ -20,30 +21,51 @@ export class FiltersService {
   private async dataSearch(search: string, data: any) {
     switch (search) {
       case 'audit':
-        return [search];
+        const queryAudit: any = {
+          idUser: new Types.ObjectId(data.idUser),
+        };
+
+        if (data.action) {
+          queryAudit.action = data.action;
+        }
+
+        if (data.dateStart || data.dateEnd) {
+          queryAudit.timeChanges = {
+            ...(data.dateStart && { $gte: new Date(data.dateStart) }),
+            ...(data.dateEnd && { $lte: new Date(data.dateEnd) }),
+          };
+        }
+
+        return await this.auditModel
+          .find(queryAudit)
+          .sort({ timeChanges: data.order === 'ASC' ? 1 : -1 })
+          .select('-__v -changes');
 
       case 'video':
-        dateSearch(data.dateStart, data.dateEnd);
-        // const response = await this.videoModel
-        //   .find({
-        //     isDelete: { $ne: VideoDelete.true },
-        //     $or: [{ dateCreate: { $gte: data.dateStart } }],
-        //   })
-        //   .sort({ nameVideo: data.order === 'ASC' ? 1 : -1 })
-        //   .select('-__v');
-        return "response";
+        const query: VideoQuery = {
+          isDelete: { $ne: VideoDelete.true },
+        };
 
-      case 'followers':
-        return [search];
+        if (data.dateStart || data.dateEnd) {
+          query.dateCreate = {
+            ...(data.dateStart && { $gte: new Date(data.dateStart) }),
+            ...(data.dateEnd && { $lte: new Date(data.dateEnd) }),
+          };
+        }
 
-      case 'creators':
-        return [search];
+        return await this.videoModel
+          .find(query)
+          .sort({ [data.key]: data.order === 'ASC' ? 1 : -1 })
+          .select('-__v');
 
       case 'ranking':
-        return [search];
+        return await this.rankingModel
+          .find()
+          .sort({ average: data.order === 'ASC' ? 1 : -1 })
+          .select('-__v -listVotes');
 
       default:
-        break;
+        return [];
     }
   }
 
@@ -52,9 +74,9 @@ export class FiltersService {
       if (!page) {
         page = 1;
       }
-      const responseSearch = await this.dataSearch(search, JSON.parse(data));
-      return responseSearch;
-      // return response(responseSearch, page, '');
+      const results = await this.dataSearch(search, JSON.parse(data));
+      return results;
+      // return response(results, page, '');
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
