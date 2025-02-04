@@ -9,15 +9,19 @@ export const clearVideoRes = ({
   url,
   stateVideo,
   dateCreate,
+  isDelete,
 }): VideoResponseClear => {
   return {
     idVideo: _id?.toString(),
     idUser: idUser?.toString(),
+    idRanking: '',
     nameVideo: nameVideo,
     description: description,
     url: url,
     stateVideo: stateVideo,
     dateCreate: dateCreate,
+    average: 0,
+    isDelete,
   };
 };
 
