@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { listUsers, listVideos } from '../helpers/initialData.helper';
+import { VideoService } from 'src/video/video.service';
 
 @Injectable()
 export class SeederService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private videoService: VideoService,
+  ) {}
 
   async seed() {
     if (!(await this.userService.databaseSize())) {
@@ -16,12 +20,18 @@ export class SeederService {
           }),
         );
 
-        for (let i = addedUsers.length; i > 0; i--) {
-          // let count = listVideos.length;
-          // for (let j = 0; j < count; j++) {
-          //   console.log(count);
-          // }
-          // count--;
+        let count = 0;
+        let key = 0;
+        for (let i = listUsers.length; i > 0; i--) {
+          while (count < i) {
+            await this.videoService.create({
+              ...listVideos[key],
+              idUser: addedUsers[i - 1].idUser,
+            });
+            key++;
+            count++;
+          }
+          count = 0;
         }
 
         // console.log('Datos iniciales cargados');
