@@ -17,6 +17,10 @@ export class UserService {
     private token: AuthToken,
   ) {}
 
+  async databaseSize() {
+    return await this.userModel.countDocuments();
+  }
+
   async emailExist(email: string, password: string) {
     const user = await this.userModel.findOne({ email: email });
     if (!user) {
