@@ -5,9 +5,10 @@ import { UserModule } from 'src/user/user.module';
 import { VideoModule } from 'src/video/video.module';
 import { FollowModule } from 'src/follow/follow.module';
 import { LikeModule } from 'src/like/like.module';
+import { RankingModule } from 'src/ranking/ranking.module';
 
 @Module({
-  imports: [UserModule, VideoModule, FollowModule, LikeModule],
+  imports: [UserModule, VideoModule, FollowModule, LikeModule, RankingModule],
   providers: [SeederService, SeederCommand],
   exports: [SeederService],
 })
