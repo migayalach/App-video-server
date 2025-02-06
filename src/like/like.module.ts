@@ -14,5 +14,6 @@ import { VideoModule } from 'src/video/video.module';
   ],
   controllers: [LikeController],
   providers: [LikeService],
+  exports: [LikeService],
 })
 export class LikeModule {}
