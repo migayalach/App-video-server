@@ -4,6 +4,7 @@ import { listUsers, listVideos } from '../helpers/initialData.helper';
 import { VideoService } from 'src/video/video.service';
 import { FollowService } from 'src/follow/follow.service';
 import { Follow } from 'src/enums/follow.enum';
+import { LikeService } from 'src/like/like.service';
 
 @Injectable()
 export class SeederService {
@@ -11,6 +12,7 @@ export class SeederService {
     private userService: UserService,
     private videoService: VideoService,
     private followService: FollowService,
+    private likeService: LikeService,
   ) {}
 
   // private name(params: any) {}
@@ -29,12 +31,16 @@ export class SeederService {
         console.log('*****************************************');
         let count = 0;
         let key = 0;
+        const videoList = [];
         for (let i = listUsers.length; i > 0; i--) {
           while (count < i) {
-            await this.videoService.create({
+            const {
+              video: { idVideo },
+            } = await this.videoService.create({
               ...listVideos[key],
               idUser: addedUsers[i - 1].idUser,
             });
+            videoList.push(idVideo);
             key++;
             count++;
           }
@@ -61,6 +67,20 @@ export class SeederService {
             limit--;
           }
         }
+
+        console.log('*****************************************');
+        for (let i = 0; i < videoList.length; i++) {
+          const limit = addedUsers.length + addedUsers.length / 2;
+          const number = Math.floor(Math.random() * limit);
+          if (number < addedUsers.length) {
+            await this.likeService.create({
+              idUser: addedUsers[number].idUser,
+              idVideo: videoList[i],
+            });
+          }
+        }
+
+        console.log('*****************************************');
         // console.log('Datos iniciales cargados');
       } catch (error) {
         console.error('Error al cargar los datos iniciales:', error);
