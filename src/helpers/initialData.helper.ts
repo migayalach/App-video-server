@@ -85,19 +85,3 @@ export const listVideos = [
     url: 'https://www.youtube.com/watch?v=NuIrbz0IRK8',
   },
 ];
-
-function added(elements, users) {
-  let count = 0,
-    key = 0;
-  for (let i = users; i > 0; i--) {
-    while (count < i) {
-      console.log(`user: ${i} = ${elements[key]}`);
-      key++;
-      count++;
-    }
-    count = 0;
-  }
-  return;
-}
-
-added(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'], 4);
