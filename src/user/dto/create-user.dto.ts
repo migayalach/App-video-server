@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ description: 'The name of the user', example: 'Nicolas' })
@@ -22,4 +22,13 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({
+    description: 'Photo profile of the user',
+    example:
+      'https://res.cloudinary.com/dqgcyonb9/image/upload/v1729104650/Ballet/rlcc22yrzuqmnbxqxbo4.png',
+  })
+  @IsString()
+  @IsOptional()
+  picture?: string;
 }
