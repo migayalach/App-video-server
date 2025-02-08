@@ -3,21 +3,28 @@ export const listUsers = [
     name: 'Patito',
     email: 'nena@gmail.com',
     password: 'password123',
+    picture:
+      'https://res.cloudinary.com/dqgcyonb9/image/upload/v1723172445/Ballet/qqapxmcvvceb2epa33mr.png',
   },
   {
     name: 'Nicolas',
     email: 'nico@gmail.com',
     password: 'password123',
+    picture:
+      'https://res.cloudinary.com/dqgcyonb9/image/upload/v1729092230/Ballet/ume76hsu8xbingqqa38w.png',
   },
   {
     name: 'Pipocas',
     email: 'pipocas@gmail.com',
     password: 'password123',
+    picture: '',
   },
   {
     name: 'Pelucas',
     email: 'pelucas@gmail.com',
     password: 'password123',
+    picture:
+      'https://res.cloudinary.com/dqgcyonb9/image/upload/v1733339396/Ballet/dpcm66v7zsaexyxdusqu.png',
   },
 ];
 
