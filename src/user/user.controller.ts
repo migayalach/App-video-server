@@ -11,7 +11,11 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserResponse, UserData } from 'src/interfaces/user.interface';
+import {
+  UserData,
+  UserCreated,
+  UserUpdate,
+} from 'src/interfaces/user.interface';
 import { Response } from '../interfaces/response.interface';
 import {
   ApiBody,
@@ -54,12 +58,12 @@ export class UserController {
     status: 500,
     description: 'An unexpected error occurred while searching for the user.',
   })
-  async create(@Body() createUserDto: CreateUserDto): Promise<any> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserCreated> {
     return await this.userService.create(createUserDto);
   }
 
   // !GET ALL USER
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: 'Get list user' })
   @ApiQuery({
@@ -173,7 +177,7 @@ export class UserController {
   async update(
     @Param('idUser') idUser: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserResponse> {
+  ): Promise<UserUpdate> {
     return await this.userService.update(idUser, updateUserDto);
   }
 }
