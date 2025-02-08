@@ -6,6 +6,5 @@ export class RefreshTokenDto {
   idUser: string;
 
   @IsString()
-  @IsNotEmpty()
   refreshToken: string;
 }
