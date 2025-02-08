@@ -13,6 +13,9 @@ export class User extends Document {
   password: string;
 
   @Prop()
+  picture?: string;
+
+  @Prop()
   token?: string;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
