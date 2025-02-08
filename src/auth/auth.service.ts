@@ -19,7 +19,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Sorry, this token is expired.',
+          error: 'Sorry, this token is expired, please iniciate sesion.',
         },
         HttpStatus.NOT_FOUND,
       );
