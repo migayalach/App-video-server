@@ -21,6 +21,7 @@ import { DownloadModule } from './download/download.module';
 import { AuditModule } from './audit/audit.module';
 import { RankingModule } from './ranking/ranking.module';
 import { FiltersModule } from './filters/filters.module';
+import { SignMiddleware } from './sign/sign.middleware';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { FiltersModule } from './filters/filters.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(SignMiddleware).forRoutes('sign');
     consumer
       .apply(UserMiddleware)
       .exclude({ path: 'user', method: RequestMethod.GET })
