@@ -17,6 +17,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   email: string;
 
+  @ApiProperty({
+    description: "The user's profile photo.",
+    example: 'Image URL',
+  })
   @IsString()
   @IsOptional()
   picture?: string;
