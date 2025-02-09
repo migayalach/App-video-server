@@ -14,13 +14,13 @@ export function UserMiddleware(
     const { name, email, password } = request.body;
 
     if (!name || !name.trim().length) {
-      return sendError('El campo "name" es obligatorio');
+      return sendError('The "name" field is required');
     }
     if (!email || !email.trim().length) {
-      return sendError('El campo "email" es obligatorio');
+      return sendError('The "email" field is required');
     }
     if (!password || !password.trim().length) {
-      return sendError('El campo "password" es obligatorio');
+      return sendError('The "password" field is required');
     }
   }
 
@@ -28,10 +28,10 @@ export function UserMiddleware(
     const { name, email } = request.body;
 
     if (!name || !name.trim().length) {
-      return sendError('El campo "name" es obligatorio');
+      return sendError('The "name" field is required');
     }
     if (!email || !email.trim().length) {
-      return sendError('El campo "email" es obligatorio');
+      return sendError('The "email" field is required');
     }
   }
 
