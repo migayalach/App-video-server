@@ -18,6 +18,7 @@ import {
 } from 'src/interfaces/user.interface';
 import { Response } from '../interfaces/response.interface';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -31,7 +32,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // !CREATE USER
-  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Create new user' })
   @ApiBody({ type: CreateUserDto, description: 'User creation data' })
@@ -49,21 +49,63 @@ export class UserController {
       },
     },
   })
-  @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({
-    status: 404,
+    status: 400,
+    description: 'Resource not found',
+    content: {
+      'application/json': {
+        examples: {
+          requestName: {
+            summary: "The 'name' field is required.",
+            value: {
+              statusCode: 400,
+              message: "The 'name' field is required.",
+            },
+          },
+          requestEmail: {
+            summary: "The 'email' field is required.",
+            value: {
+              statusCode: 400,
+              message: "The 'email' field is required.",
+            },
+          },
+          requestPassword: {
+            summary: "The 'password' field is required.",
+            value: {
+              statusCode: 400,
+              message: "The 'password' field is required.",
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 409,
     description: 'Sorry, this email currently exists.',
+    schema: {
+      example: {
+        status: 409,
+        error: 'Sorry, this email currently exists.',
+      },
+    },
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while searching for the user.',
+    description: 'An unexpected error occurred while processing the request.',
+    schema: {
+      example: {
+        status: 500,
+        error:
+          'An unexpected error occurred while processing the user creation.',
+      },
+    },
   })
   async create(@Body() createUserDto: CreateUserDto): Promise<UserCreated> {
     return await this.userService.create(createUserDto);
   }
 
   // !GET ALL USER
-  // @UseGuards(AuthGuard)
   @Get()
   @ApiOperation({ summary: 'Get list user' })
   @ApiQuery({
@@ -103,7 +145,13 @@ export class UserController {
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred.',
+    description: 'An unexpected error occurred while processing the request.',
+    schema: {
+      example: {
+        status: 500,
+        error: 'An unexpected error occurred while search the users.',
+      },
+    },
   })
   async findAll(@Query('page') page: string): Promise<Response> {
     return await this.userService.findAll(+page);
@@ -111,6 +159,7 @@ export class UserController {
 
   // !GET IDUSER INFORMATION
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Get(':idUser')
   @ApiOperation({ summary: 'Get user information' })
   @ApiParam({
@@ -131,12 +180,35 @@ export class UserController {
     },
   })
   @ApiResponse({
+    status: 401,
+    description: 'Invalid or expired token',
+    schema: {
+      example: {
+        status: 401,
+        message: 'Invalid or expired token: TokenExpiredError: jwt expired',
+        error: 'Unauthorized',
+      },
+    },
+  })
+  @ApiResponse({
     status: 404,
     description: "Sorry, this user doesn't exists.",
+    schema: {
+      example: {
+        status: 404,
+        error: "Sorry, this user doesn't exists.",
+      },
+    },
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while searching for the user.',
+    description: 'An unexpected error occurred while processing the request.',
+    schema: {
+      example: {
+        status: 500,
+        error: 'An unexpected error occurred while search the user.',
+      },
+    },
   })
   async findOne(@Param('idUser') idUser: string): Promise<UserData> {
     return await this.userService.findOne(idUser);
@@ -144,6 +216,7 @@ export class UserController {
 
   // !UPDATE PERSONAL INFORMATION
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Patch(':idUser')
   @ApiOperation({ summary: 'Update personal information user' })
   @ApiParam({
@@ -167,12 +240,59 @@ export class UserController {
     },
   })
   @ApiResponse({
+    status: 400,
+    description: 'Resource not found',
+    content: {
+      'application/json': {
+        examples: {
+          requestName: {
+            summary: "The 'name' field is required.",
+            value: {
+              statusCode: 400,
+              message: "The 'name' field is required.",
+            },
+          },
+          requestEmail: {
+            summary: "The 'email' field is required.",
+            value: {
+              statusCode: 400,
+              message: "The 'email' field is required.",
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid or expired token',
+    schema: {
+      example: {
+        status: 401,
+        message: 'Invalid or expired token: TokenExpiredError: jwt expired',
+        error: 'Unauthorized',
+      },
+    },
+  })
+  @ApiResponse({
     status: 404,
     description: "Sorry, this user doesn't exists.",
+    schema: {
+      example: {
+        status: 404,
+        error: "Sorry, this user doesn't exists.",
+      },
+    },
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while searching for the user.',
+    description: 'An unexpected error occurred while processing the request.',
+    schema: {
+      example: {
+        status: 500,
+        error: 'An unexpected error occurred while search the user.',
+      },
+    },
   })
   async update(
     @Param('idUser') idUser: string,
