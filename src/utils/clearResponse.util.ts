@@ -1,5 +1,5 @@
 import { LikeResponseGetAll } from 'src/interfaces/like.interface';
-import { VideoInfo, VideoResponseClear } from 'src/interfaces/video.interface';
+import { OneVideoResponse, VideoInfo } from 'src/interfaces/video.interface';
 
 export const clearVideoRes = ({
   _id,
@@ -10,7 +10,7 @@ export const clearVideoRes = ({
   stateVideo,
   dateCreate,
   isDelete,
-}): VideoResponseClear => {
+}): OneVideoResponse => {
   return {
     idVideo: _id?.toString(),
     idUser: idUser?.toString(),
@@ -27,7 +27,7 @@ export const clearVideoRes = ({
 
 export const clearResVideos = (
   results: Array<VideoInfo>,
-): Array<VideoResponseClear> => {
+): Array<OneVideoResponse> => {
   const data = [];
   for (let index = 0; index < results.length; index++) {
     data.push(clearVideoRes(results[index]));
