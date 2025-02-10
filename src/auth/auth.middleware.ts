@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { LoginData } from 'src/interfaces/middlewares.interface';
 
 export function AuthMiddleware(
-  request: Request<object, object, LoginData>,
+  request: Request,
   response: Response,
   next: NextFunction,
 ) {
@@ -10,12 +9,12 @@ export function AuthMiddleware(
     response.status(400).json({ status: 400, message });
   };
   if (request.method === 'POST') {
-    const { email, password } = request.body;
-    if (!email || !email.trim().length) {
-      return sendError('El campo "email" es obligatorio');
+    const { idUser, refreshToken } = request.body;
+    if (idUser.length < 10) {
+      return sendError('The "idUser" field is required.');
     }
-    if (!password || !password.trim().length) {
-      return sendError('El campo "password" es obligatorio');
+    if (!refreshToken || !refreshToken.trim().length) {
+      return sendError('The "refreshToken" field is required.');
     }
   }
 
