@@ -5,8 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { Request } from 'express';
+import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -25,17 +25,11 @@ export class AuthGuard implements CanActivate {
         secret: jwtConstants.secret,
       });
 
-      // Aquí comparamos el idUser del token con el idUser del parámetro de la ruta
-      const userIdFromToken = payload.sub; // O la propiedad que uses en el token
-      const userIdFromParams = request.params.idUser;
-
-      if (userIdFromToken !== userIdFromParams) {
-        throw new UnauthorizedException('Invalid token for this user');
-      }
-
       request['user'] = payload;
     } catch (error) {
-      throw new UnauthorizedException(`Invalid or expired token: ${error}`);
+      throw new UnauthorizedException(
+        `Invalid or expired token: ${error.message}`,
+      );
     }
 
     return true;
