@@ -27,7 +27,7 @@ export interface VideoInfo {
   isDelete: boolean | string;
 }
 
-export interface VideoResponseClear {
+export interface OneVideoResponse {
   idVideo: string;
   idUser: string;
   idRanking: string;
