@@ -12,9 +12,18 @@ import {
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
-import { VideoData, VideoResponse } from 'src/interfaces/video.interface';
+import {
+  OneVideoResponse,
+  VideoResponse,
+} from 'src/interfaces/video.interface';
 import { Response } from 'src/interfaces/response.interface';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('video')
@@ -22,7 +31,8 @@ export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   //!CREATE VIDEO
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Create new video' })
   @ApiResponse({
@@ -45,7 +55,37 @@ export class VideoController {
       },
     },
   })
-  @ApiResponse({ status: 400, description: 'Invalid input data' })
+  @ApiResponse({
+    status: 400,
+    description: 'Resource not found',
+    content: {
+      'application/json': {
+        examples: {
+          requestName: {
+            summary: 'The "idUser" field is required.',
+            value: {
+              statusCode: 400,
+              message: "The 'name' field is required.",
+            },
+          },
+          requestEmail: {
+            summary: 'The "nameVideo" field is required.',
+            value: {
+              statusCode: 400,
+              message: 'The "nameVideo" field is required.',
+            },
+          },
+          requestuRL: {
+            summary: 'The "url" field is required.',
+            value: {
+              statusCode: 400,
+              message: 'The "url" field is required.',
+            },
+          },
+        },
+      },
+    },
+  })
   @ApiResponse({
     status: 404,
     description: 'Resource not found',
@@ -53,14 +93,27 @@ export class VideoController {
       'application/json': {
         examples: {
           userNotFound: {
-            summary: 'User not found',
-            value: { message: "Sorry, this user doesn't exist" },
+            summary: `Sorry, this user doesn't exists.`,
+            value: { status: 404, message: `Sorry, this user doesn't exists.` },
           },
           nameConflict: {
-            summary: 'Name already exists',
-            value: { message: 'Sorry, this name currently exists' },
+            summary: `Sorry this name or url currently exists.`,
+            value: {
+              status: 404,
+              message: `Sorry this name or url currently exists.`,
+            },
           },
         },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'An unexpected error occurred while creating the video.',
+    schema: {
+      example: {
+        status: 500,
+        message: 'An unexpected error occurred while creating the video.',
       },
     },
   })
@@ -118,9 +171,15 @@ export class VideoController {
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred.',
+    description: 'An error occurred while retrieving videos',
+    schema: {
+      example: {
+        status: 500,
+        message: 'An error occurred while retrieving videos',
+      },
+    },
   })
-  async findAll(@Query('page') page: string): Promise<any> {
+  async findAll(@Query('page') page: string): Promise<Response> {
     return await this.videoService.findAll(+page);
   }
 
@@ -150,18 +209,31 @@ export class VideoController {
   })
   @ApiResponse({
     status: 404,
-    description: "Sorry, this video doesn't exists.",
+    description: 'Video not found.',
+    schema: {
+      example: {
+        status: 404,
+        message: 'Video not found.',
+      },
+    },
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while searching for the video.',
+    description: 'An error occurred while retrieving the video.',
+    schema: {
+      example: {
+        status: 500,
+        message: 'An error occurred while retrieving the video',
+      },
+    },
   })
-  async findOne(@Param('idVideo') idVideo: string): Promise<any> {
+  async findOne(@Param('idVideo') idVideo: string): Promise<OneVideoResponse> {
     return await this.videoService.findOne(idVideo);
   }
 
   //!UPDATE VIDEO
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Patch(':idVideo')
   @ApiOperation({ summary: 'Update information video' })
   @ApiParam({
@@ -189,22 +261,80 @@ export class VideoController {
     },
   })
   @ApiResponse({
+    status: 400,
+    description: 'Resource not found',
+    content: {
+      'application/json': {
+        examples: {
+          requestName: {
+            summary: 'The "idUser" field is required.',
+            value: {
+              statusCode: 400,
+              message: "The 'name' field is required.",
+            },
+          },
+          requestEmail: {
+            summary: 'The "nameVideo" field is required.',
+            value: {
+              statusCode: 400,
+              message: 'The "nameVideo" field is required.',
+            },
+          },
+          requestUrl: {
+            summary: 'The "url" field is required.',
+            value: {
+              statusCode: 400,
+              message: 'The "url" field is required.',
+            },
+          },
+          requestStatus: {
+            summary: 'This state is not valid.',
+            value: {
+              statusCode: 400,
+              message: 'This state is not valid.',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
     status: 404,
-    description: "Sorry, this user doesn't exists.",
+    description: 'Error to update data.',
+    content: {
+      'application/json': {
+        examples: {
+          requestName: {
+            summary: 'No changes detected, update not applied',
+            value: {
+              statusCode: 404,
+              message: 'No changes detected, update not applied',
+            },
+          },
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while searching for the video.',
+    description: 'No changes detected, update not applied',
+    schema: {
+      example: {
+        status: 500,
+        message: 'No changes detected, update not applied',
+      },
+    },
   })
   async update(
     @Param('idVideo') idVideo: string,
     @Body() infoVideo: UpdateVideoDto,
-  ): Promise<any> {
+  ): Promise<VideoResponse> {
     return await this.videoService.update(idVideo, infoVideo);
   }
 
   //!DELETE VIDEO
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Delete(':idVideo')
   @ApiOperation({ summary: 'Delete video information' })
   @ApiParam({
@@ -236,13 +366,25 @@ export class VideoController {
   })
   @ApiResponse({
     status: 404,
-    description: "Sorry, this video doesn't exists.",
+    description: 'This video has already been deleted',
+    schema: {
+      example: {
+        status: 404,
+        message: 'This video has already been deleted',
+      },
+    },
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while searching for the video.',
+    description: 'An error occurred while deleting the video.',
+    schema: {
+      example: {
+        status: 500,
+        message: 'An error occurred while deleting the video.',
+      },
+    },
   })
-  async remove(@Param('idVideo') idVideo: string): Promise<any> {
+  async remove(@Param('idVideo') idVideo: string): Promise<VideoResponse> {
     return await this.videoService.remove(idVideo);
   }
 }
