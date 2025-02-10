@@ -91,7 +91,6 @@ export class SeederService {
       }
     }
   }
-
   async seed() {
     if (!(await this.userService.databaseSize())) {
       try {
@@ -99,12 +98,12 @@ export class SeederService {
         const videoList = await this.createVideos(addedUsers);
         await this.createFollows(addedUsers);
         await this.createLikesAndRankings(addedUsers, videoList);
-        console.log('Datos iniciales cargados');
+        console.log('Initial data loaded');
       } catch (error) {
-        console.error('Error al cargar los datos iniciales:', error);
+        console.error('Error loading initial data:', error);
       }
     } else {
-      console.log('Los datos ya están cargados');
+      console.log('Data is already loaded');
     }
   }
 }
