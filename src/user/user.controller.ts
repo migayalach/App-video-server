@@ -45,6 +45,13 @@ export class UserController {
           idUser: '678e730e45b56f4dad365a3c',
           name: 'Nicolas',
           email: 'nicolasMiau@example.com',
+          picture:
+            'https://www.swissinfo.ch/content/wp-content/uploads/sites/13/2010/01/5a71e033b824c835f83fc6d86df9d23d-evo_morales-8133012-data.jpg?crop=0px,30px,3020px,2014px&w=880&ver=27c1ca2d',
+          follow: [],
+        },
+        token: {
+          access_token: 'aaabbbccc.xxxyyyzzz.mmmnnnooo', // This is a JWT access token, used for authenticated requests
+          refresh_token: '123aaa456.xxx789zzz.mmmnnn1010', // Refresh token used to obtain a new access token when expired
         },
       },
     },
