@@ -14,29 +14,29 @@ export function VideoMiddleware(
     const { idUser, nameVideo, url } = request.body;
 
     if (!idUser || !idUser.trim().length) {
-      return sendError('El campo "idUser" es obligatorio');
+      return sendError('The "idUser" field is required.');
     }
     if (!nameVideo || !nameVideo.trim().length) {
-      return sendError('El campo "nameVideo" es obligatorio');
+      return sendError('The "nameVideo" field is required.');
     }
     if (!url || !url.trim().length) {
-      return sendError('El campo "url" es obligatorio');
+      return sendError('The "url" field is required.');
     }
   }
 
   if (request.method === 'PATCH') {
     const { idUser, nameVideo, url, stateVideo } = request.body;
     if (!idUser || !idUser.trim().length) {
-      return sendError('El campo "idUser" es obligatorio');
+      return sendError('The "idUser" field is required.');
     }
     if (!nameVideo || !nameVideo.trim().length) {
-      return sendError('El campo "nameVideo" es obligatorio');
+      return sendError('The "nameVideo" field is required.');
     }
     if (!url || !url.trim().length) {
-      return sendError('El campo "url" es obligatorio');
+      return sendError('The "url" field is required.');
     }
     if (stateVideo !== 'true' && stateVideo !== 'false') {
-      return sendError('This state is not valid');
+      return sendError('This state is not valid.');
     }
   }
 
