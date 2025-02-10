@@ -22,6 +22,7 @@ import { AuditModule } from './audit/audit.module';
 import { RankingModule } from './ranking/ranking.module';
 import { FiltersModule } from './filters/filters.module';
 import { SignMiddleware } from './sign/sign.middleware';
+import { AuthMiddleware } from './auth/auth.middleware';
 
 @Module({
   imports: [
@@ -49,10 +50,12 @@ export class AppModule implements NestModule {
       .apply(UserMiddleware)
       .exclude({ path: 'user', method: RequestMethod.GET })
       .forRoutes('user');
+    consumer.apply(AuthMiddleware).forRoutes('auth');
     consumer
       .apply(VideoMiddleware)
       .exclude({ path: 'video', method: RequestMethod.GET })
       .forRoutes('video');
+
     consumer
       .apply(LikeMiddleware)
       .exclude({ path: 'like', method: RequestMethod.GET })
