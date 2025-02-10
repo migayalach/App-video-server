@@ -12,21 +12,44 @@ export class AuthService {
     private authToken: AuthToken,
   ) {}
   async refreshToken(userInfo: RefreshTokenDto) {
-    const tokenInfo = await this.userModel
-      .findById(userInfo.idUser)
-      .select('-password');
-    if (userInfo.refreshToken !== tokenInfo.token) {
+    try {
+      const tokenInfo = await this.userModel
+        .findById(userInfo.idUser)
+        .select('-password');
+      if (!tokenInfo) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'User not found.',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      if (userInfo.refreshToken !== tokenInfo.token) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'Sorry, this token is expired, please iniciate sesion.',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return await this.authToken.generateToken(
+        tokenInfo._id.toString(),
+        tokenInfo.name,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         {
-          status: HttpStatus.NOT_FOUND,
-          error: 'Sorry, this token is expired, please iniciate sesion.',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'An unexpected error occurred while processing the request.',
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    return await this.authToken.generateToken(
-      tokenInfo._id.toString(),
-      tokenInfo.name,
-    );
   }
 }
