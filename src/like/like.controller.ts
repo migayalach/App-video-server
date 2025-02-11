@@ -12,7 +12,13 @@ import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { VideoResponse } from 'src/interfaces/video.interface';
 import { Response } from 'src/interfaces/response.interface';
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('like')
@@ -21,6 +27,7 @@ export class LikeController {
 
   //!CREATE LIKE
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Create new like video' })
   @ApiResponse({
@@ -44,6 +51,30 @@ export class LikeController {
     },
   })
   @ApiResponse({
+    status: 400,
+    description: 'Resource not found',
+    content: {
+      'application/json': {
+        examples: {
+          requestIdUser: {
+            summary: 'The "idUser" field is required.',
+            value: {
+              statusCode: 400,
+              message: "The 'idUser' field is required.",
+            },
+          },
+          requestIdVideo: {
+            summary: 'The "idVideo" field is required',
+            value: {
+              statusCode: 400,
+              message: 'The "idVideo" field is required',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
     status: 404,
     description: 'Resource not found',
     content: {
@@ -51,17 +82,26 @@ export class LikeController {
         examples: {
           userNotFound: {
             summary: 'User not found',
-            value: { message: "Sorry, this user doesn't exist" },
+            value: { status: 404, message: "Sorry, this user doesn't exist" },
+          },
+          videoNotFound: {
+            summary: 'Video not found.',
+            value: {
+              status: 404,
+              message: 'Video not found.',
+            },
           },
           videoRepeat: {
             summary: 'Video repeat exists',
             value: {
-              message: 'Sorry this video is curretnly in your favorites',
+              status: 404,
+              message: `This video is already in your favorites.`,
             },
           },
           videoConflict: {
             summary: "Video doens't exists",
             value: {
+              status: 404,
               message: "Sorry, this video doesn't exists.",
             },
           },
@@ -71,7 +111,15 @@ export class LikeController {
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while searching for the like.',
+    description:
+      'An unexpected error occurred while adding the video to favorites.',
+    schema: {
+      example: {
+        status: 500,
+        message:
+          'An unexpected error occurred while adding the video to favorites.',
+      },
+    },
   })
   async create(@Body() infoLike: CreateLikeDto): Promise<VideoResponse> {
     return await this.likeService.create(infoLike);
@@ -79,6 +127,7 @@ export class LikeController {
 
   //!GET LIST OF VIDEOS USERS LIKE
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Get(':idUser')
   @ApiOperation({ summary: 'Get the list like of users videos' })
   @ApiParam({
@@ -163,11 +212,24 @@ export class LikeController {
   @ApiResponse({
     status: 404,
     description: "Sorry, this user doesn't exists.",
+    schema: {
+      example: {
+        status: 404,
+        message: "Sorry, this user doesn't exist",
+      },
+    },
   })
   @ApiResponse({
     status: 500,
     description:
-      'An unexpected error occurred while searching for the like videos user.',
+      'An unexpected error occurred while retrieving the liked videos.',
+    schema: {
+      example: {
+        status: 500,
+        message:
+          'An unexpected error occurred while retrieving the liked videos.',
+      },
+    },
   })
   async findOne(
     @Param('idUser') idUser: string,
@@ -178,6 +240,7 @@ export class LikeController {
 
   //!DELETE LIKE
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Delete(':idLike')
   @ApiOperation({ summary: 'Delete like video of list the user' })
   @ApiParam({
@@ -210,10 +273,22 @@ export class LikeController {
   @ApiResponse({
     status: 404,
     description: "Sorry, this video doesn't exists.",
+    schema: {
+      example: {
+        status: 404,
+        message: "Sorry, this video doesn't exists.",
+      },
+    },
   })
   @ApiResponse({
     status: 500,
-    description: 'An unexpected error occurred while searching for the video.',
+    description: 'An unexpected error occurred while removing the video.',
+    schema: {
+      example: {
+        status: 500,
+        message: 'An unexpected error occurred while removing the video.',
+      },
+    },
   })
   async remove(@Param('idLike') idLike: string): Promise<VideoResponse> {
     return await this.likeService.remove(idLike);
