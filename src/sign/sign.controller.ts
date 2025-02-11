@@ -78,7 +78,7 @@ export class SignController {
     schema: {
       example: {
         status: 409,
-        error: 'Sorry, this email already exists.',
+        message: 'Sorry, this email already exists.',
       },
     },
   })
@@ -88,7 +88,7 @@ export class SignController {
     schema: {
       example: {
         status: 500,
-        error:
+        message:
           'An unexpected error occurred while processing the user creation.',
       },
     },
@@ -178,7 +178,7 @@ export class SignController {
     schema: {
       example: {
         status: 500,
-        error:
+        message:
           'An unexpected error occurred while processing the user creation.',
       },
     },
@@ -238,7 +238,7 @@ export class SignController {
     schema: {
       example: {
         status: 500,
-        error: 'An unexpected error occurred while logging out.',
+        message: 'An unexpected error occurred while logging out.',
       },
     },
   })
