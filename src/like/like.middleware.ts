@@ -12,10 +12,10 @@ export function LikeMiddleware(
   if (request.method === 'POST') {
     const { idUser, idVideo } = request.body;
     if (!idUser || !idUser.trim().length) {
-      return sendError('El campo "idUser" es obligatorio');
+      return sendError('The "idUser" field is required');
     }
     if (!idVideo || !idVideo.trim().length) {
-      return sendError('El campo "idVideo" es obligatorio');
+      return sendError('The "idVideo" field is required');
     }
   }
   next();
