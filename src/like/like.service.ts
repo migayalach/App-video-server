@@ -31,7 +31,7 @@ export class LikeService {
         throw new HttpException(
           {
             status: HttpStatus.NOT_FOUND,
-            error: `Sorry this video is curretnly in your favorites.`,
+            message: `This video is already in your favorites.`,
           },
           HttpStatus.NOT_FOUND,
         );
@@ -42,7 +42,7 @@ export class LikeService {
       });
       await addList.save();
       return {
-        message: 'Video added to favorites list.',
+        message: 'Video successfully added to favorites.',
         video: await this.videoService.findOne(infoLike.idVideo.toString()),
       };
     } catch (error) {
@@ -52,7 +52,8 @@ export class LikeService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while creating the user.',
+          message:
+            'An unexpected error occurred while adding the video to favorites.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -82,15 +83,14 @@ export class LikeService {
       }
       return response(clearListVideoLike(data), page, `like/${idUser}?`);
     } catch (error) {
-      console.log(error);
-
       if (error instanceof HttpException) {
         throw error;
       }
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while creating the user.',
+          message:
+            'An unexpected error occurred while retrieving the liked videos.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -108,14 +108,14 @@ export class LikeService {
         throw new HttpException(
           {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
-            error: `Sorry this video don't exist.`,
+            message: `Sorry, this video does not exist in your favorites.`,
           },
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
       const { idVideo } = await this.likeModel.findByIdAndDelete(idLike);
       return {
-        message: `Video deleted successfully`,
+        message: `Video successfully removed from favorites.`,
         video: await this.videoService.findOne(idVideo.toString()),
       };
     } catch (error) {
@@ -125,7 +125,7 @@ export class LikeService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while creating the user.',
+          message: 'An unexpected error occurred while removing the video.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
