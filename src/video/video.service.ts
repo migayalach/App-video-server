@@ -75,7 +75,7 @@ export class VideoService {
     }
   }
 
-  async findAll(page): Promise<Response> {
+  async findAll(page: number): Promise<Response> {
     if (!page) {
       page = 1;
     }
