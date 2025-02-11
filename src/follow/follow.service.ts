@@ -7,7 +7,7 @@ import { Model, Types } from 'mongoose';
 import { response } from 'src/utils/response.util';
 import { Follow } from 'src/enums/follow.enum';
 import { Response } from 'src/interfaces/response.interface';
-import { FollowResponse } from 'src/interfaces/follow.interface';
+import { ChannelUser, FollowResponse } from 'src/interfaces/follow.interface';
 
 @Injectable()
 export class FollowService {
@@ -33,7 +33,7 @@ export class FollowService {
           throw new HttpException(
             {
               status: HttpStatus.CONFLICT,
-              error: `Sorry, you are already following this creator.`,
+              message: 'You are already following this creator.',
             },
             HttpStatus.CONFLICT,
           );
@@ -42,14 +42,16 @@ export class FollowService {
           $push: { follow: new Types.ObjectId(dataFollow.idCreador) },
         });
       }
+      const { idUser, name, email, picture } = await this.userService.findOne(
+        dataFollow.idCreador.toString(),
+      );
+
       return {
         message:
           dataFollow.option === Follow.Adding
             ? 'Follow this channel'
             : 'Unfollow this channel',
-        creator: await this.userService.findOne(
-          dataFollow.idCreador.toString(),
-        ),
+        creator: { idUser, name, email, picture },
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -58,7 +60,7 @@ export class FollowService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while search the user.',
+          message: 'An unexpected error occurred while processing the request.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
@@ -72,11 +74,15 @@ export class FollowService {
       }
       const { follow } =
         await this.UserModel.findById(idUser).select('follow -_id');
-      const listFollow = await Promise.all(
-        follow?.map(
-          async (index) => await this.userService.findOne(index.toString()),
-        ),
-      );
+      const listFollow: Array<ChannelUser> = (
+        await Promise.all(
+          follow?.map(
+            async (index) => await this.userService.findOne(index.toString()),
+          ),
+        )
+      ).map(({ idUser, name, email, picture }) => {
+        return { idUser, name, email, picture };
+      });
       return response(listFollow, page, `follow/${idUser}?`);
     } catch (error) {
       if (error instanceof HttpException) {
@@ -85,7 +91,8 @@ export class FollowService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while search the user.',
+          message:
+            'An unexpected error occurred while retrieving the user data.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
