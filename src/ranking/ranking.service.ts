@@ -5,20 +5,26 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Ranking } from './schema/ranking.schema';
 import { Model, Types } from 'mongoose';
 import { totalAverange } from 'src/utils/operations.util';
+import {
+  GetIdRanking,
+  rankingResponseUpdate,
+} from 'src/interfaces/ranking.interface';
 
 @Injectable()
 export class RankingService {
   constructor(
     @InjectModel(Ranking.name) private rankingModel: Model<Ranking>,
   ) {}
-  async create(infomation: CreateRankingDto) {
+  async create(infomation: CreateRankingDto): Promise<{ message: string }> {
     try {
       const createRanking = new this.rankingModel({
         idUser: new Types.ObjectId(infomation.idUser),
         idVideo: new Types.ObjectId(infomation.idVideo),
       });
       await createRanking.save();
-      return;
+      return {
+        message: `Create successfully.`,
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -26,21 +32,21 @@ export class RankingService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while creating the user.',
+          message: 'An unexpected error occurred while creating the ranking.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  async findOne(idVideo: string) {
+  async findOne(idVideo: string): Promise<GetIdRanking> {
     try {
       const infoAverage = await this.rankingModel
         .findOne({
           idVideo: new Types.ObjectId(idVideo),
         })
         .select('_id average');
-      return infoAverage;
+      return { _id: infoAverage._id.toString(), average: infoAverage.average };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -48,14 +54,17 @@ export class RankingService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while updating the ranking.',
+          message: 'An unexpected error occurred while searching for the item.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  async update(idRanking: string, information: UpdateRankingDto) {
+  async update(
+    idRanking: string,
+    information: UpdateRankingDto,
+  ): Promise<rankingResponseUpdate> {
     try {
       const ranking = await this.rankingModel.findOneAndUpdate(
         {
