@@ -63,14 +63,14 @@ export class VideoController {
     content: {
       'application/json': {
         examples: {
-          requestName: {
+          requestIdUser: {
             summary: 'The "idUser" field is required.',
             value: {
               statusCode: 400,
-              message: "The 'name' field is required.",
+              message: "The 'idUser' field is required.",
             },
           },
-          requestEmail: {
+          requestNameVideo: {
             summary: 'The "nameVideo" field is required.',
             value: {
               statusCode: 400,
