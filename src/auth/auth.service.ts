@@ -20,7 +20,7 @@ export class AuthService {
         throw new HttpException(
           {
             status: HttpStatus.NOT_FOUND,
-            error: 'User not found.',
+            message: 'User not found.',
           },
           HttpStatus.NOT_FOUND,
         );
@@ -30,7 +30,7 @@ export class AuthService {
         throw new HttpException(
           {
             status: HttpStatus.NOT_FOUND,
-            error: 'Sorry, this token is expired, please iniciate sesion.',
+            message: 'Sorry, this token is expired, please iniciate sesion.',
           },
           HttpStatus.NOT_FOUND,
         );
@@ -46,7 +46,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while processing the request.',
+          message: 'An unexpected error occurred while processing the request.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
