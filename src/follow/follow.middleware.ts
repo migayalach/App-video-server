@@ -13,18 +13,19 @@ export function FollowMiddleware(
 
   if (request.method === 'POST') {
     const { idUser, idCreador, option } = request.body;
+
     if (!idUser || !idUser.trim().length) {
-      return sendError('El campo "idUser" es obligatorio');
+      return sendError('"idUser" is required.');
     }
     if (!idCreador || !idCreador.trim().length) {
-      return sendError('El campo "idCreator" es obligatorio');
+      return sendError('"idCreator" is required.');
     }
     if (
       !option ||
       !option.trim().length ||
       (option !== Follow.Adding && option !== Follow.Delete)
     ) {
-      return sendError('El campo "option" es obligatorio');
+      return sendError('"Option" must be either "Adding" or "Delete".');
     }
   }
 
