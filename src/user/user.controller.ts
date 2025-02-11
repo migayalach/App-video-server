@@ -93,7 +93,7 @@ export class UserController {
     schema: {
       example: {
         status: 409,
-        error: 'Sorry, this email currently exists.',
+        message: 'Sorry, this email currently exists.',
       },
     },
   })
@@ -103,7 +103,7 @@ export class UserController {
     schema: {
       example: {
         status: 500,
-        error:
+        message:
           'An unexpected error occurred while processing the user creation.',
       },
     },
@@ -156,7 +156,7 @@ export class UserController {
     schema: {
       example: {
         status: 500,
-        error: 'An unexpected error occurred while search the users.',
+        message: 'An unexpected error occurred while search the users.',
       },
     },
   })
@@ -203,7 +203,7 @@ export class UserController {
     schema: {
       example: {
         status: 404,
-        error: "Sorry, this user doesn't exists.",
+        message: "Sorry, this user doesn't exists.",
       },
     },
   })
@@ -213,7 +213,7 @@ export class UserController {
     schema: {
       example: {
         status: 500,
-        error: 'An unexpected error occurred while search the user.',
+        message: 'An unexpected error occurred while search the user.',
       },
     },
   })
