@@ -72,7 +72,7 @@ export class AuthController {
     schema: {
       example: {
         status: 500,
-        error: 'An unexpected error occurred while processing the request.',
+        message: 'An unexpected error occurred while processing the request.',
       },
     },
   })
