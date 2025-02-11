@@ -43,6 +43,7 @@ export class UserService {
 
   async emailExist(email: string, password: string): Promise<ExistEmail> {
     const user = await this.userModel.findOne({ email: email });
+
     if (!user) {
       throw new HttpException(
         {
@@ -68,12 +69,15 @@ export class UserService {
     );
 
     await this.userModel.findByIdAndUpdate(user._id, { token: refresh_token });
+
     return {
       idUser: user._id.toString(),
       name: user.name,
       email: user.email,
       picture: user.picture,
-      follow: [],
+      follow: await this.getAllFollow(
+        user.follow.map((index) => index.toString()),
+      ),
       access_token,
       refresh_token,
     };
