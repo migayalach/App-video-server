@@ -6,6 +6,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AuditState } from 'src/enums/audit.enum';
 import { UserService } from 'src/user/user.service';
 import { response } from 'src/utils/response.util';
+import { Response } from 'src/interfaces/response.interface';
+import { VideoCreateAudit } from 'src/interfaces/audit.interface';
 
 @Injectable()
 export class AuditService {
@@ -13,7 +15,8 @@ export class AuditService {
     @InjectModel(Audit.name) private auditModel: Model<Audit>,
     private userService: UserService,
   ) {}
-  async create(information: CreateAuditDto): Promise<any> {
+
+  async create(information: CreateAuditDto): Promise<VideoCreateAudit> {
     try {
       const createAudit = new this.auditModel({
         ...information,
@@ -22,7 +25,17 @@ export class AuditService {
         changes:
           information.action === AuditState.Update ? information.changes : {},
       });
-      return await createAudit.save();
+      const data = await createAudit.save();
+
+      return {
+        idUser: data.idUser.toString(),
+        idVideo: data.idVideo.toString(),
+        action: data.action as AuditState,
+        _id: data._id.toString(),
+        timeChanges: data.timeChanges,
+        timeOnly: data.timeOnly,
+        __v: data.__v,
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -37,40 +50,34 @@ export class AuditService {
     }
   }
 
-  async findAll(idUser: string, page?: number): Promise<any> {
+  async findAll(
+    idUser: string,
+    idVideo: string,
+    page?: number,
+  ): Promise<Response> {
     try {
       if (!page) {
         page = 1;
       }
+      if (!Types.ObjectId.isValid(idUser)) {
+        throw new HttpException(
+          'Invalid idUser format',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (!Types.ObjectId.isValid(idVideo)) {
+        throw new HttpException(
+          'Invalid idVideo format',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       await this.userService.findOne(idUser);
       const auditData = await this.auditModel
         .find({
-          idUser: new Types.ObjectId(idUser),
+          idVideo: new Types.ObjectId(idVideo),
         })
-        .select('-__v -idUser -changes')
-        .populate('idVideo', 'nameVideo');
-      return response(auditData, page, `audit?idUser=${idUser}&`);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while creating the audit.',
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async findOne(idAudit: string): Promise<any> {
-    try {
-      const auditData = await this.auditModel
-        .findById(idAudit)
-        .select('-__v -idUser')
-        .populate('idVideo', '-__v -idUser');
-      return auditData;
+        .select('-__v -idUser');
+      return response(auditData, page, `audit/${idUser}/${idVideo}?`);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
