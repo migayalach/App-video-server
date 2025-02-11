@@ -23,6 +23,9 @@ import { RankingModule } from './ranking/ranking.module';
 import { FiltersModule } from './filters/filters.module';
 import { SignMiddleware } from './sign/sign.middleware';
 import { AuthMiddleware } from './auth/auth.middleware';
+import { AuditMiddleware } from './audit/audit.middleware';
+import { RankingMiddleware } from './ranking/ranking.middleware';
+import { DownloadMiddleware } from './download/download.middleware';
 
 @Module({
   imports: [
@@ -55,14 +58,16 @@ export class AppModule implements NestModule {
       .apply(VideoMiddleware)
       .exclude({ path: 'video', method: RequestMethod.GET })
       .forRoutes('video');
-
-    consumer
-      .apply(LikeMiddleware)
-      .exclude({ path: 'like', method: RequestMethod.GET })
-      .forRoutes('like');
+    consumer.apply(AuditMiddleware).forRoutes('audit');
     consumer
       .apply(FollowMiddleware)
       .exclude({ path: 'follow', method: RequestMethod.GET })
       .forRoutes('follow');
+    consumer
+      .apply(LikeMiddleware)
+      .exclude({ path: 'like', method: RequestMethod.GET })
+      .forRoutes('like');
+    consumer.apply(RankingMiddleware).forRoutes('ranking');
+    consumer.apply(DownloadMiddleware).forRoutes('download');
   }
 }
