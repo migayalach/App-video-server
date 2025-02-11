@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongoose';
-import { VideoInfo } from './video.interface';
+import { OneVideoResponse } from './video.interface';
 
 export interface LikeResponseGetAll {
   idLike: string | ObjectId;
-  video: VideoInfo;
+  video: OneVideoResponse;
 }
