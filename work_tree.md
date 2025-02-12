@@ -4,6 +4,18 @@
         └── settings.json
     └── 📁src
         └── app.module.ts
+        └── 📁audit
+            └── audit.controller.spec.ts
+            └── audit.controller.ts
+            └── audit.middleware.spec.ts
+            └── audit.middleware.ts
+            └── audit.module.ts
+            └── audit.service.spec.ts
+            └── audit.service.ts
+            └── 📁dto
+                └── create-audit.dto.ts
+            └── 📁schemas
+                └── audit.schema.ts
         └── 📁auth
             └── auth.controller.spec.ts
             └── auth.controller.ts
@@ -21,9 +33,27 @@
                 └── refreshToken.dto.ts
             └── refresh-token.guard.spec.ts
             └── refresh-token.guard.ts
+        └── 📁download
+            └── download.controller.spec.ts
+            └── download.controller.ts
+            └── download.middleware.spec.ts
+            └── download.middleware.ts
+            └── download.module.ts
+            └── download.service.spec.ts
+            └── download.service.ts
         └── 📁enums
+            └── audit.enum.ts
+            └── download.enum.ts
             └── follow.enum.ts
             └── video.enum.ts
+        └── 📁filters
+            └── filters.controller.spec.ts
+            └── filters.controller.ts
+            └── filters.middleware.spec.ts
+            └── filters.middleware.ts
+            └── filters.module.ts
+            └── filters.service.spec.ts
+            └── filters.service.ts
         └── 📁follow
             └── 📁dto
                 └── create-follow.dto.ts
@@ -34,11 +64,16 @@
             └── follow.module.ts
             └── follow.service.spec.ts
             └── follow.service.ts
+        └── 📁helpers
+            └── initialData.helper.ts
         └── 📁interfaces
+            └── audit.interface.ts
+            └── filters.interface.ts
             └── follow.interface.ts
             └── like.interface.ts
             └── login.interface.ts
             └── middlewares.interface.ts
+            └── ranking.interface.ts
             └── response.interface.ts
             └── user.interface.ts
             └── video.interface.ts
@@ -55,6 +90,20 @@
             └── 📁schemas
                 └── like.schema.ts
         └── main.ts
+        └── 📁ranking
+            └── 📁dto
+                └── create-ranking.dto.ts
+                └── update-ranking.dto.ts
+            └── ranking.controller.spec.ts
+            └── ranking.controller.ts
+            └── ranking.middleware.spec.ts
+            └── ranking.middleware.ts
+            └── ranking.module.ts
+            └── ranking.service.spec.ts
+            └── ranking.service.ts
+            └── 📁schema
+                └── ranking.schema.ts
+                └── vote.schema.ts
         └── 📁seeders
             └── initial-seeder.service.ts
             └── seed.command.ts
@@ -65,6 +114,8 @@
                 └── signUp.dto.ts
             └── sign.controller.spec.ts
             └── sign.controller.ts
+            └── sign.middleware.spec.ts
+            └── sign.middleware.ts
             └── sign.module.ts
             └── sign.service.spec.ts
             └── sign.service.ts
@@ -85,6 +136,7 @@
             └── clearResponse.util.ts
             └── info.util.ts
             └── navegation.util.ts
+            └── operations.util.ts
             └── response.util.ts
             └── results.util.ts
         └── 📁video
@@ -114,4 +166,5 @@
     └── README.md
     └── tsconfig.build.json
     └── tsconfig.json
+    └── work_tree.md
 ```
