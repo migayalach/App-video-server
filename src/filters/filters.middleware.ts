@@ -14,7 +14,7 @@ export function FiltersMiddleware(
     if (search[0] === 'audit') {
       const [user] = data[2].split(',');
       const infoPerson = user.slice(4, user.length - 3).split('%');
-      if (infoPerson[2].length < 15) {
+      if (parseInt(infoPerson[2]) === 22) {
         return sendError('Please introduce your identification.');
       }
     }
