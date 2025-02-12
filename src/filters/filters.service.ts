@@ -5,6 +5,7 @@ import { Audit } from 'src/audit/schemas/audit.schema';
 import { VideoDelete } from 'src/enums/video.enum';
 import { VideoQuery } from 'src/interfaces/filters.interface';
 import { Ranking } from 'src/ranking/schema/ranking.schema';
+import { clearVideoRes } from 'src/utils/clearResponse.util';
 import { Video } from 'src/video/schemas/video.schema';
 import { response } from '../utils/response.util';
 
@@ -16,7 +17,7 @@ export class FiltersService {
     @InjectModel(Ranking.name) private rankingModel: Model<Ranking>,
   ) {}
 
-  private async dataSearch(search: string, data: any) {
+  private async dataSearch(search: string, data: any): Promise<any> {
     switch (search) {
       case 'audit':
         const queryAudit: any = {
@@ -33,11 +34,23 @@ export class FiltersService {
             ...(data.dateEnd && { $lte: new Date(data.dateEnd) }),
           };
         }
-
-        return await this.auditModel
+        const dataAudit = await this.auditModel
           .find(queryAudit)
           .sort({ timeChanges: data.order === 'ASC' ? 1 : -1 })
           .select('-__v -changes');
+
+        return dataAudit.map(
+          ({ _id, idUser, idVideo, action, timeChanges, timeOnly }) => {
+            return {
+              idAudit: _id,
+              idUser,
+              idVideo,
+              action,
+              timeChanges,
+              timeOnly,
+            };
+          },
+        );
 
       case 'video':
         const query: VideoQuery = {
@@ -51,30 +64,63 @@ export class FiltersService {
           };
         }
 
-        return await this.videoModel
+        const dataVideo = await this.videoModel
           .find(query)
           .sort({ [data.key]: data.order === 'ASC' ? 1 : -1 })
           .select('-__v');
+        return dataVideo.map(
+          ({
+            _id,
+            idUser,
+            nameVideo,
+            description,
+            url,
+            stateVideo,
+            isDelete,
+            dateCreate,
+          }) => {
+            return {
+              idVideo: _id,
+              idUser,
+              nameVideo,
+              description,
+              url,
+              stateVideo,
+              isDelete,
+              dateCreate,
+            };
+          },
+        );
 
       case 'ranking':
-        return await this.rankingModel
+        const dataRankign = await this.rankingModel
           .find()
           .sort({ average: data.order === 'ASC' ? 1 : -1 })
           .select('-__v -listVotes');
+        const listRanking = await Promise.all(
+          dataRankign.map(async ({ _id, idVideo, average }) => {
+            const dataVideo = await this.videoModel
+              .findOne({ _id: idVideo, isDelete: false })
+              .select('-__v');
+            const info = clearVideoRes(dataVideo);
+            return { ...info, idRanking: _id, average };
+          }),
+        );
+
+        return listRanking;
 
       default:
         return [];
     }
   }
 
-  async findAll(search: string, data: any, page?: number) {
+  async findAll(search: string, data: any, page?: number): Promise<any> {
     try {
       if (!page) {
         page = 1;
       }
       const results = await this.dataSearch(search, JSON.parse(data));
-      return results;
-      // return response(results, page, '');
+      return response(results, page, '');
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -82,7 +128,7 @@ export class FiltersService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An unexpected error occurred while creating the audit.',
+          messge: 'An unexpected error occurred while search information.',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
