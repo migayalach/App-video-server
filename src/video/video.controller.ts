@@ -351,8 +351,15 @@ export class VideoController {
   //!DELETE VIDEO
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @Delete(':idVideo')
+  @Delete(':idUser/:idVideo')
   @ApiOperation({ summary: 'Delete video information' })
+  @ApiParam({
+    name: 'idUser',
+    description:
+      "'idUser' parameter to search the database and verify video information.",
+    type: String,
+    example: '67ac1b2cf89208c0aff209aa',
+  })
   @ApiParam({
     name: 'idVideo',
     description:
@@ -393,6 +400,16 @@ export class VideoController {
     },
   })
   @ApiResponse({
+    status: 406,
+    description: "Sorry this user isn't the creator of the video.",
+    schema: {
+      example: {
+        status: 406,
+        message: "Sorry this user isn't the creator of the video.",
+      },
+    },
+  })
+  @ApiResponse({
     status: 500,
     description: 'An error occurred while deleting the video.',
     schema: {
@@ -403,8 +420,9 @@ export class VideoController {
     },
   })
   async remove(
+    @Param('idUser') idUser: string,
     @Param('idVideo') idVideo: string,
   ): Promise<VideoResponseDelelete> {
-    return await this.videoService.remove(idVideo);
+    return await this.videoService.remove(idUser, idVideo);
   }
 }
