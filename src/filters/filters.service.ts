@@ -17,7 +17,7 @@ export class FiltersService {
     @InjectModel(Ranking.name) private rankingModel: Model<Ranking>,
   ) {}
 
-  private async dataSearch(search: string, data: any): Promise<any> {
+  private async dataSearch(search: string, data: any) {
     switch (search) {
       case 'audit':
         const queryAudit: any = {
@@ -114,13 +114,18 @@ export class FiltersService {
     }
   }
 
-  async findAll(search: string, data: any, page?: number): Promise<any> {
+  async findAll(search: string, data: any, page?: number) {
     try {
       if (!page) {
         page = 1;
       }
-      const results = await this.dataSearch(search, JSON.parse(data));
-      return response(results, page, '');
+      const parsedData = JSON.parse(data);
+      const results = await this.dataSearch(search, parsedData);
+      return response(
+        results,
+        page,
+        `filters?search=${search}&data=${encodeURIComponent(JSON.stringify(parsedData))}&`,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
