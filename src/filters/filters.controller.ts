@@ -9,7 +9,7 @@ export class FiltersController {
     @Query('search') search: string,
     @Query('data') data: any,
     @Query('page') page: string,
-  ) {
+  ): Promise<any> {
     return await this.filtersService.findAll(search, data, +page);
   }
 }
