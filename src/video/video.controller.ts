@@ -15,6 +15,7 @@ import { UpdateVideoDto } from './dto/update-video.dto';
 import {
   OneVideoResponse,
   VideoResponse,
+  VideoResponseDelelete,
 } from 'src/interfaces/video.interface';
 import { Response } from 'src/interfaces/response.interface';
 import {
@@ -401,7 +402,9 @@ export class VideoController {
       },
     },
   })
-  async remove(@Param('idVideo') idVideo: string): Promise<VideoResponse> {
+  async remove(
+    @Param('idVideo') idVideo: string,
+  ): Promise<VideoResponseDelelete> {
     return await this.videoService.remove(idVideo);
   }
 }
