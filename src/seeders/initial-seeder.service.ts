@@ -18,12 +18,13 @@ export class SeederService {
   ) {}
 
   private async createUsers() {
-    return Promise.all(
+    const userList = Promise.all(
       listUsers.map(async (data) => {
         const { user } = await this.userService.create(data);
         return user;
       }),
     );
+    return userList;
   }
 
   private async createVideos(addedUsers: any[]) {
@@ -48,7 +49,7 @@ export class SeederService {
     return videoList;
   }
 
-  private async createFollows(addedUsers: any[]) {
+  private async createFollows(addedUsers: any[]): Promise<void> {
     let index = 1;
     let limit = addedUsers.length;
     let current = 0;
@@ -71,7 +72,10 @@ export class SeederService {
     }
   }
 
-  private async createLikesAndRankings(addedUsers: any[], videoList: any[]) {
+  private async createLikesAndRankings(
+    addedUsers: any[],
+    videoList: any[],
+  ): Promise<void> {
     for (let i = 0; i < videoList.length; i++) {
       const limit = addedUsers.length + addedUsers.length / 2;
       const number = Math.floor(Math.random() * limit);
@@ -92,7 +96,7 @@ export class SeederService {
     }
   }
 
-  async seed() {
+  async seed(): Promise<void> {
     if (!(await this.userService.databaseSize())) {
       try {
         const addedUsers = await this.createUsers();
