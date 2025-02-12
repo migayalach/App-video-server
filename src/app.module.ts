@@ -26,6 +26,7 @@ import { AuthMiddleware } from './auth/auth.middleware';
 import { AuditMiddleware } from './audit/audit.middleware';
 import { RankingMiddleware } from './ranking/ranking.middleware';
 import { DownloadMiddleware } from './download/download.middleware';
+import { FiltersMiddleware } from './filters/filters.middleware';
 
 @Module({
   imports: [
@@ -69,5 +70,6 @@ export class AppModule implements NestModule {
       .forRoutes('like');
     consumer.apply(RankingMiddleware).forRoutes('ranking');
     consumer.apply(DownloadMiddleware).forRoutes('download');
+    consumer.apply(FiltersMiddleware).forRoutes('filters');
   }
 }
