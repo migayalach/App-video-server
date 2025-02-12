@@ -12,6 +12,7 @@ import { response } from 'src/utils/response.util';
 import {
   OneVideoResponse,
   VideoResponse,
+  VideoResponseDelelete,
 } from 'src/interfaces/video.interface';
 import { Response } from 'src/interfaces/response.interface';
 import { AuditService } from 'src/audit/audit.service';
@@ -81,9 +82,10 @@ export class VideoService {
     }
     try {
       const results = clearResVideos(
-        await this.videoModel.find({ stateVideo: true }).select('-__v'),
+        await this.videoModel
+          .find({ stateVideo: true, isDelete: false })
+          .select('-__v'),
       );
-
       for (let i = 0; i < results.length; i++) {
         const { _id, average } = await this.rankingService.findOne(
           results[i].idVideo,
@@ -201,10 +203,10 @@ export class VideoService {
     }
   }
 
-  async remove(idVideo: string): Promise<VideoResponse> {
+  async remove(idVideo: string): Promise<VideoResponseDelelete> {
     try {
-      const { isDelete } = await this.findOne(idVideo);
-      if (isDelete === VideoDelete.true) {
+      const videoData = await this.findOne(idVideo);
+      if (videoData.isDelete === VideoDelete.true) {
         throw new HttpException(
           {
             status: HttpStatus.NOT_FOUND,
@@ -226,9 +228,12 @@ export class VideoService {
         action: AuditState.Delete,
       });
 
+      const { _id } = await this.rankingService.findOne(idVideo);
+      await this.rankingService.delete(_id.toString());
+
       return {
         message: 'Video deleted successfully',
-        video: clearVideoRes(await this.videoModel.findByIdAndDelete(idVideo)),
+        video: { ...videoData, isDelete: true },
       };
     } catch (error) {
       if (error instanceof HttpException) {
