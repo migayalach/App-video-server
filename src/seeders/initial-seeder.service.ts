@@ -91,6 +91,7 @@ export class SeederService {
       }
     }
   }
+
   async seed() {
     if (!(await this.userService.databaseSize())) {
       try {
