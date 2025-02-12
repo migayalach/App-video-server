@@ -100,12 +100,13 @@ export class RankingService {
         { $set: { average } },
         { new: true },
       );
-
       return {
         message: 'Registered ranking.',
-        average,
+        average: 0,
       };
     } catch (error) {
+      console.log(error);
+
       if (error instanceof HttpException) {
         throw error;
       }
@@ -117,5 +118,9 @@ export class RankingService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async delete(idRanking: string) {
+    return await this.rankingModel.findByIdAndDelete(idRanking);
   }
 }
