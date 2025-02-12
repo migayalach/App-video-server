@@ -203,38 +203,50 @@ export class VideoService {
     }
   }
 
-  async remove(idVideo: string): Promise<VideoResponseDelelete> {
+  async remove(
+    idUser: string,
+    idVideo: string,
+  ): Promise<VideoResponseDelelete> {
     try {
       const videoData = await this.findOne(idVideo);
-      if (videoData.isDelete === VideoDelete.true) {
-        throw new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            message: 'This video has already been deleted',
-          },
-          HttpStatus.NOT_FOUND,
-        );
+      if (idUser === videoData.idUser) {
+        if (videoData.isDelete === VideoDelete.true) {
+          throw new HttpException(
+            {
+              status: HttpStatus.NOT_FOUND,
+              message: 'This video has already been deleted',
+            },
+            HttpStatus.NOT_FOUND,
+          );
+        }
+
+        const infoVideo = await this.videoModel.findByIdAndUpdate(idVideo, {
+          isDelete: true,
+        });
+
+        await this.useSevice.findOne(infoVideo.idUser.toString());
+
+        await this.auditService.create({
+          idUser: new Types.ObjectId(infoVideo.idUser),
+          idVideo: new Types.ObjectId(idVideo.toString()),
+          action: AuditState.Delete,
+        });
+
+        const { _id } = await this.rankingService.findOne(idVideo);
+        await this.rankingService.delete(_id.toString());
+
+        return {
+          message: 'Video deleted successfully',
+          video: { ...videoData, isDelete: true },
+        };
       }
-
-      const infoVideo = await this.videoModel.findByIdAndUpdate(idVideo, {
-        isDelete: true,
-      });
-
-      await this.useSevice.findOne(infoVideo.idUser.toString());
-
-      await this.auditService.create({
-        idUser: new Types.ObjectId(infoVideo.idUser),
-        idVideo: new Types.ObjectId(idVideo.toString()),
-        action: AuditState.Delete,
-      });
-
-      const { _id } = await this.rankingService.findOne(idVideo);
-      await this.rankingService.delete(_id.toString());
-
-      return {
-        message: 'Video deleted successfully',
-        video: { ...videoData, isDelete: true },
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_ACCEPTABLE,
+          message: "Sorry this user isn't the creator of the video.",
+        },
+        HttpStatus.NOT_ACCEPTABLE,
+      );
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -242,7 +254,7 @@ export class VideoService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An error occurred while deleting the video',
+          message: 'An error occurred while deleting the video',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
