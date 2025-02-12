@@ -6,6 +6,11 @@ export interface VideoResponse {
   video: VideoData;
 }
 
+export interface VideoResponseDelelete {
+  message: string;
+  video: OneVideoResponse;
+}
+
 export interface VideoData {
   idVideo: string | ObjectId;
   idUser: string | ObjectId;
