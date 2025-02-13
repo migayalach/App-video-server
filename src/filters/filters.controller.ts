@@ -1,6 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { FiltersService } from './filters.service';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { Response } from '../interfaces/response.interface';
+
 @Controller('filters')
 export class FiltersController {
   constructor(private readonly filtersService: FiltersService) {}
@@ -335,9 +337,9 @@ export class FiltersController {
   })
   async findAll(
     @Query('search') search: string,
-    @Query('data') data: any,
+    @Query('data') data: string,
     @Query('page') page: string,
-  ) {
+  ): Promise<Response> {
     return await this.filtersService.findAll(search, data, +page);
   }
 }
