@@ -10,3 +10,12 @@ export interface VideoCreateAudit {
   timeOnly: string;
   __v: number;
 }
+
+export interface AuditInterface {
+  idAudit: string | ObjectId;
+  idUser: string | ObjectId;
+  idVideo: string | ObjectId;
+  action: AuditState;
+  timeChanges: Date;
+  timeOnly: Date;
+}
