@@ -6,6 +6,9 @@ import { FollowService } from 'src/follow/follow.service';
 import { Follow } from 'src/enums/follow.enum';
 import { LikeService } from 'src/like/like.service';
 import { RankingService } from 'src/ranking/ranking.service';
+import { UserData } from 'src/interfaces/user.interface';
+import { Types } from 'mongoose';
+import { ListVideosSeeders } from 'src/interfaces/video.interface';
 
 @Injectable()
 export class SeederService {
@@ -17,7 +20,7 @@ export class SeederService {
     private rankingService: RankingService,
   ) {}
 
-  private async createUsers() {
+  private async createUsers(): Promise<UserData[]> {
     const userList = Promise.all(
       listUsers.map(async (data) => {
         const { user } = await this.userService.create(data);
@@ -27,7 +30,9 @@ export class SeederService {
     return userList;
   }
 
-  private async createVideos(addedUsers: any[]) {
+  private async createVideos(
+    addedUsers: UserData[],
+  ): Promise<ListVideosSeeders[]> {
     let count = 0;
     let key = 0;
     const videoList = [];
@@ -38,7 +43,7 @@ export class SeederService {
           video: { idVideo },
         } = await this.videoService.create({
           ...listVideos[key],
-          idUser: addedUsers[i - 1].idUser,
+          idUser: new Types.ObjectId(addedUsers[i - 1].idUser.toString()),
         });
         videoList.push(idVideo);
         key++;
@@ -49,7 +54,7 @@ export class SeederService {
     return videoList;
   }
 
-  private async createFollows(addedUsers: any[]): Promise<void> {
+  private async createFollows(addedUsers: UserData[]): Promise<void> {
     let index = 1;
     let limit = addedUsers.length;
     let current = 0;
@@ -58,8 +63,8 @@ export class SeederService {
       if (index !== limit) {
         for (let j = index; j < limit; j++) {
           await this.followService.create({
-            idUser: addedUsers[current].idUser,
-            idCreador: addedUsers[j].idUser,
+            idUser: new Types.ObjectId(addedUsers[current].idUser.toString()),
+            idCreador: new Types.ObjectId(addedUsers[j].idUser.toString()),
             option: Follow.Adding,
           });
         }
@@ -73,8 +78,8 @@ export class SeederService {
   }
 
   private async createLikesAndRankings(
-    addedUsers: any[],
-    videoList: any[],
+    addedUsers: UserData[],
+    videoList: ListVideosSeeders[],
   ): Promise<void> {
     for (let i = 0; i < videoList.length; i++) {
       const limit = addedUsers.length + addedUsers.length / 2;
@@ -82,13 +87,15 @@ export class SeederService {
 
       if (number < addedUsers.length) {
         await this.likeService.create({
-          idUser: addedUsers[number].idUser,
-          idVideo: videoList[i],
+          idUser: new Types.ObjectId(addedUsers[number].idUser.toString()),
+          idVideo: new Types.ObjectId(videoList[i].toString().toString()),
         });
 
-        const { idRanking } = await this.videoService.findOne(videoList[i]);
+        const { idRanking } = await this.videoService.findOne(
+          videoList[i].toString(),
+        );
         const information = {
-          idUser: addedUsers[number].idUser,
+          idUser: new Types.ObjectId(addedUsers[number].idUser.toString()),
           qualification: Math.floor(Math.random() * 5),
         };
         await this.rankingService.update(idRanking, information);
