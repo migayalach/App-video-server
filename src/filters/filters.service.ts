@@ -1,13 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { Audit } from 'src/audit/schemas/audit.schema';
 import { VideoDelete } from 'src/enums/video.enum';
-import { VideoQuery } from 'src/interfaces/filters.interface';
+import {
+  OptionsFilters,
+  QueryAudit,
+  VideoQuery,
+} from 'src/interfaces/filters.interface';
 import { Ranking } from 'src/ranking/schema/ranking.schema';
 import { clearVideoRes } from 'src/utils/clearResponse.util';
 import { Video } from 'src/video/schemas/video.schema';
 import { response } from '../utils/response.util';
+import { Response } from '../interfaces/response.interface';
+import { OneVideoResponse, VideoFilters } from 'src/interfaces/video.interface';
+import { AuditInterface } from 'src/interfaces/audit.interface';
 
 @Injectable()
 export class FiltersService {
@@ -17,11 +24,14 @@ export class FiltersService {
     @InjectModel(Ranking.name) private rankingModel: Model<Ranking>,
   ) {}
 
-  private async dataSearch(search: string, data: any) {
+  private async dataSearch(
+    search: string,
+    data: OptionsFilters,
+  ): Promise<Array<VideoFilters | OneVideoResponse | AuditInterface> | []> {
     switch (search) {
       case 'audit':
-        const queryAudit: any = {
-          idUser: new Types.ObjectId(data.idUser),
+        const queryAudit: QueryAudit = {
+          idUser: data.idUser,
         };
 
         if (data.action) {
@@ -42,12 +52,12 @@ export class FiltersService {
         return dataAudit.map(
           ({ _id, idUser, idVideo, action, timeChanges, timeOnly }) => {
             return {
-              idAudit: _id,
-              idUser,
-              idVideo,
+              idAudit: _id.toString(),
+              idUser: idUser.toString(),
+              idVideo: idVideo.toString(),
               action,
               timeChanges,
-              timeOnly,
+              timeOnly: new Date(timeOnly),
             };
           },
         );
@@ -80,8 +90,8 @@ export class FiltersService {
             dateCreate,
           }) => {
             return {
-              idVideo: _id,
-              idUser,
+              idVideo: _id.toString(),
+              idUser: idUser.toString(),
               nameVideo,
               description,
               url,
@@ -114,7 +124,11 @@ export class FiltersService {
     }
   }
 
-  async findAll(search: string, data: any, page?: number) {
+  async findAll(
+    search: string,
+    data: string,
+    page?: number,
+  ): Promise<Response> {
     try {
       if (!page) {
         page = 1;
