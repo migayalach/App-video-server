@@ -21,6 +21,10 @@ export interface VideoData {
   dateCreate: Date;
 }
 
+export interface VideoFilters extends VideoData {
+  dateCreate: Date;
+}
+
 export interface VideoInfo {
   _id: string | ObjectId | unknown;
   idUser: string | ObjectId;
@@ -43,4 +47,10 @@ export interface OneVideoResponse {
   dateCreate: Date;
   average: number;
   isDelete: boolean | string;
+}
+
+export interface ListVideosSeeders {
+  name: string;
+  description: string;
+  url: string;
 }
