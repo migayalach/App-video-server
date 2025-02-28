@@ -30,6 +30,15 @@ export class CreateVideoDto {
   description: string;
 
   @ApiProperty({
+    description: 'The URL where the image is hosted.',
+    example:
+      'https://res.cloudinary.com/dqgcyonb9/image/upload/v1733752729/Ballet/ov9uairpgr9gaut7zkqn.jpg',
+  })
+  @IsString()
+  @IsNotEmpty()
+  image: string;
+
+  @ApiProperty({
     description: 'The URL where the video is hosted.',
     example:
       'https://www.youtube.com/watch?v=S8EX1taYL40&list=RDS8EX1taYL40&start_radio=1',
