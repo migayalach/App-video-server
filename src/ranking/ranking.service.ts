@@ -102,7 +102,7 @@ export class RankingService {
       );
       return {
         message: 'Registered ranking.',
-        average: 0,
+        average,
       };
     } catch (error) {
       console.log(error);
