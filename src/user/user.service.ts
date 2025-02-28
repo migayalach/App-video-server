@@ -75,9 +75,6 @@ export class UserService {
       name: user.name,
       email: user.email,
       picture: user.picture,
-      follow: await this.getAllFollow(
-        user.follow.map((index) => index.toString()),
-      ),
       access_token,
       refresh_token,
     };
@@ -134,26 +131,20 @@ export class UserService {
 
   async findAll(page?: number): Promise<Response> {
     try {
-      const results = await Promise.all(
-        (await this.userModel.find().select('-password -__v')).map(
-          async ({ _id, name, email, picture, follow }) => {
-            return {
-              idUser: _id.toString(),
-              name,
-              email,
-              picture,
-              follow: await this.getAllFollow(
-                follow.map((index) => index.toString()),
-              ),
-            };
-          },
-        ),
+      const results = await this.userModel.find().select('-password').lean();
+      results.forEach((user) => {
+        delete user.follow;
+        delete user.__v;
+      });
+      const resultsData = results.map(
+        ({ _id, name, email, picture, token }) => {
+          return { idUser: _id.toString(), name, email, picture, token };
+        },
       );
-
       if (!page) {
         page = 1;
       }
-      return response(results, page, 'user?');
+      return response(resultsData, page, 'user?');
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -188,9 +179,6 @@ export class UserService {
         name: infoUser.name,
         email: infoUser.email,
         picture: infoUser.picture,
-        follow: await this.getAllFollow(
-          infoUser.follow.map((index) => index.toString()),
-        ),
       };
     } catch (error) {
       if (error instanceof HttpException) {
