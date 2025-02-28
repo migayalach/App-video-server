@@ -18,7 +18,11 @@ async function bootstrap() {
   SwaggerModule.setup('app-video', app, documentFactory);
   app.setGlobalPrefix('app-video');
   app.enableCors({
-    origin: ['http://localhost:3001', 'https://miapp.vercel.app'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://miapp.vercel.app',
+    ],
     methods: 'GET, POST, PUT, DELETE, PATCH',
     allowedHeaders: 'Authorization, Content-Type',
   });
