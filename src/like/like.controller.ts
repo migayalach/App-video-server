@@ -241,7 +241,7 @@ export class LikeController {
   //!DELETE LIKE
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @Delete(':idLike')
+  @Delete(':idVideo/:idUser')
   @ApiOperation({ summary: 'Delete like video of list the user' })
   @ApiParam({
     name: 'idLike',
@@ -290,7 +290,10 @@ export class LikeController {
       },
     },
   })
-  async remove(@Param('idLike') idLike: string): Promise<VideoResponse> {
-    return await this.likeService.remove(idLike);
+  async remove(
+    @Param('idVideo') idVideo: string,
+    @Param('idUser') idUser: string,
+  ): Promise<VideoResponse> {
+    return await this.likeService.remove(idVideo, idUser);
   }
 }
