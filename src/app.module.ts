@@ -27,6 +27,7 @@ import { AuditMiddleware } from './audit/audit.middleware';
 import { RankingMiddleware } from './ranking/ranking.middleware';
 import { DownloadMiddleware } from './download/download.middleware';
 import { FiltersMiddleware } from './filters/filters.middleware';
+import { MyVideosModule } from './my-videos/my-videos.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { FiltersMiddleware } from './filters/filters.middleware';
     AuditModule,
     RankingModule,
     FiltersModule,
+    MyVideosModule,
   ],
   controllers: [],
   providers: [],
