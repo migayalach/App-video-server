@@ -27,6 +27,16 @@ export class VideoService {
     private rankingService: RankingService,
     private auditService: AuditService,
   ) {}
+
+  async allVideos(): Promise<OneVideoResponse[]> {
+    const data = clearResVideos(
+      await this.videoModel
+        .find({ stateVideo: true, isDelete: false })
+        .select('-__v'),
+    );
+    return data;
+  }
+
   async create(infoVideo: CreateVideoDto): Promise<VideoResponse> {
     try {
       await this.useSevice.findOne(infoVideo.idUser.toString());
@@ -76,16 +86,12 @@ export class VideoService {
     }
   }
 
-  async findAll(page: number): Promise<Response> {
+  async findAll(page?: number): Promise<Response> {
     if (!page) {
       page = 1;
     }
     try {
-      const results = clearResVideos(
-        await this.videoModel
-          .find({ stateVideo: true, isDelete: false })
-          .select('-__v'),
-      );
+      const results = await this.allVideos();
       for (let i = 0; i < results.length; i++) {
         const { _id, average } = await this.rankingService.findOne(
           results[i].idVideo,
@@ -117,7 +123,6 @@ export class VideoService {
           HttpStatus.NOT_FOUND,
         );
       }
-
       const clearInfo = clearVideoRes(videoInfo);
       const { _id, average } = await this.rankingService.findOne(idVideo);
       return { ...clearInfo, idRanking: _id.toString(), average };
@@ -201,6 +206,31 @@ export class VideoService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async actionLike(action: string, idVideo: string, idUser: string) {
+    if (action === 'like') {
+      await this.videoModel.findByIdAndUpdate(
+        {
+          _id: idVideo,
+        },
+        {
+          $push: {
+            usersLike: idUser,
+          },
+        },
+      );
+    } else if (action === 'dislike') {
+      await this.videoModel.findByIdAndUpdate(
+        {
+          _id: idVideo,
+        },
+        {
+          $pull: { usersLike: idUser },
+        },
+      );
+    }
+    return ':D';
   }
 
   async remove(
