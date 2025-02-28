@@ -6,9 +6,11 @@ export const clearVideoRes = ({
   idUser,
   nameVideo,
   description,
+  image,
   url,
   stateVideo,
   dateCreate,
+  usersLike,
   isDelete,
 }): OneVideoResponse => {
   return {
@@ -17,10 +19,12 @@ export const clearVideoRes = ({
     idRanking: '',
     nameVideo: nameVideo,
     description: description,
+    image: image,
     url: url,
     stateVideo: stateVideo,
     dateCreate: dateCreate,
     average: 0,
+    usersLike,
     isDelete,
   };
 };
@@ -38,12 +42,10 @@ export const clearResVideos = (
 export const clearListVideoLike = (
   list: Array<any>,
 ): Array<LikeResponseGetAll> => {
-  const data = [];
-  for (let index = 0; index < list.length; index++) {
-    const obj = { idLike: '', video: {} };
-    obj.idLike = list[index]._id;
-    obj.video = clearVideoRes(list[index].idVideo);
-    data.push(obj);
-  }
-  return data;
+  return list.map(({ _id, idVideo }) => {
+    return {
+      idLike: _id,
+      video: idVideo,
+    };
+  });
 };
