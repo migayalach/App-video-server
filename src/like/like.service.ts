@@ -1,20 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Like } from './schemas/like.schema';
 import { UserService } from 'src/user/user.service';
 import { VideoService } from 'src/video/video.service';
 import { response } from 'src/utils/response.util';
 import { VideoResponse } from 'src/interfaces/video.interface';
 import { Response } from 'src/interfaces/response.interface';
-import { clearListVideoLike } from 'src/utils/clearResponse.util';
 
 @Injectable()
 export class LikeService {
   constructor(
-    @InjectModel(Like.name) private likeModel: Model<Like>,
     private userService: UserService,
     private videoService: VideoService,
   ) {}
@@ -23,11 +18,8 @@ export class LikeService {
     try {
       await this.userService.findOne(infoLike.idUser.toString());
       await this.videoService.findOne(infoLike.idVideo.toString());
-      const data = await this.likeModel.findOne({
-        idUser: new Types.ObjectId(infoLike.idUser),
-        idVideo: new Types.ObjectId(infoLike.idVideo),
-      });
-      if (data) {
+      const data = await this.videoService.findOne(infoLike.idVideo.toString());
+      if (data.usersLike.includes(infoLike.idUser.toString())) {
         throw new HttpException(
           {
             status: HttpStatus.NOT_FOUND,
@@ -36,11 +28,13 @@ export class LikeService {
           HttpStatus.NOT_FOUND,
         );
       }
-      const addList = new this.likeModel({
-        idUser: new Types.ObjectId(infoLike.idUser),
-        idVideo: new Types.ObjectId(infoLike.idVideo),
-      });
-      await addList.save();
+
+      await this.videoService.actionLike(
+        'like',
+        infoLike.idVideo.toString(),
+        infoLike.idUser.toString(),
+      );
+
       return {
         message: 'Video successfully added to favorites.',
         video: await this.videoService.findOne(infoLike.idVideo.toString()),
@@ -65,23 +59,11 @@ export class LikeService {
       if (!page) {
         page = 1;
       }
-      await this.userService.findOne(idUser.toString());
-      const listVideo = await this.likeModel
-        .find({
-          idUser: new Types.ObjectId(idUser),
-        })
-        .select('-idUser -__v');
-
-      const data = [];
-      for (let i = 0; i < listVideo.length; i++) {
-        const obj = { _id: '', idVideo: {} };
-        obj._id = listVideo[i]._id.toString();
-        obj.idVideo = await this.videoService.findOne(
-          listVideo[i].idVideo.toString(),
-        );
-        data.push(obj);
-      }
-      return response(clearListVideoLike(data), page, `like/${idUser}?`);
+      const results = await this.videoService.allVideos();
+      const favorites = results.filter(({ usersLike }) =>
+        usersLike.includes(idUser),
+      );
+      return response(favorites, page, `like/${idUser}?`);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -97,26 +79,23 @@ export class LikeService {
     }
   }
 
-  async remove(idLike: string): Promise<VideoResponse> {
+  async remove(idVideo: string, idUser: string): Promise<VideoResponse> {
     try {
-      const data = await this.likeModel
-        .findById({
-          _id: new Types.ObjectId(idLike),
-        })
-        .select('-__v');
-      if (!data) {
+      const data = await this.videoService.findOne(idVideo);
+      if (!data.usersLike.includes(idUser)) {
         throw new HttpException(
           {
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
-            message: `Sorry, this video does not exist in your favorites.`,
+            status: HttpStatus.NOT_FOUND,
+            message: `This video isn't already in your favorites.`,
           },
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          HttpStatus.NOT_FOUND,
         );
       }
-      const { idVideo } = await this.likeModel.findByIdAndDelete(idLike);
+      const infoVideo = await this.videoService.findOne(idVideo);
+      await this.videoService.actionLike('dislike', idVideo, idUser);
       return {
         message: `Video successfully removed from favorites.`,
-        video: await this.videoService.findOne(idVideo.toString()),
+        video: infoVideo,
       };
     } catch (error) {
       if (error instanceof HttpException) {
