@@ -94,10 +94,12 @@ export class SeederService {
         const { idRanking } = await this.videoService.findOne(
           videoList[i].toString(),
         );
+
         const information = {
           idUser: new Types.ObjectId(addedUsers[number].idUser.toString()),
           qualification: Math.floor(Math.random() * 5),
         };
+
         await this.rankingService.update(idRanking, information);
       }
     }
