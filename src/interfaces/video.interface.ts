@@ -30,9 +30,11 @@ export interface VideoInfo {
   idUser: string | ObjectId;
   nameVideo: string;
   description: string;
+  image: string;
   url: string;
   stateVideo: VideoState;
   dateCreate: Date;
+  usersLike: Array<string | ObjectId>;
   isDelete: boolean | string;
 }
 
@@ -42,15 +44,18 @@ export interface OneVideoResponse {
   idRanking: string;
   nameVideo: string;
   description: string;
+  image: string;
   url: string;
   stateVideo: VideoState;
   dateCreate: Date;
   average: number;
+  usersLike: Array<string | ObjectId>;
   isDelete: boolean | string;
 }
 
 export interface ListVideosSeeders {
   name: string;
   description: string;
+  image: string;
   url: string;
 }
