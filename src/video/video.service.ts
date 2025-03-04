@@ -34,6 +34,12 @@ export class VideoService {
         .find({ stateVideo: true, isDelete: false })
         .select('-__v'),
     );
+    for (let i = 0; i < data.length; i++) {
+      const { _id, average } = await this.rankingService.findOne(
+        data[i].idVideo,
+      );
+      data[i] = { ...data[i], idRanking: _id.toString(), average };
+    }
     return data;
   }
 
@@ -92,13 +98,6 @@ export class VideoService {
     }
     try {
       const results = await this.allVideos();
-      for (let i = 0; i < results.length; i++) {
-        const { _id, average } = await this.rankingService.findOne(
-          results[i].idVideo,
-        );
-        results[i] = { ...results[i], idRanking: _id.toString(), average };
-      }
-
       return response(results, page, 'video?');
     } catch (error) {
       if (error instanceof HttpException) {
