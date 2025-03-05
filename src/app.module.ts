@@ -32,7 +32,9 @@ import { MyVideosModule } from './my-videos/my-videos.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost/appVideo'),
+    MongooseModule.forRoot(
+      process.env.DB_CONNECTION_DEPLOY || process.env.DB_CONNECTION_LOCAL,
+    ),
     UserModule,
     VideoModule,
     LikeModule,
