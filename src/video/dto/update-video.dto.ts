@@ -1,12 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateVideoDto } from './create-video.dto';
-import {
-  IsEnum,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 import { VideoState } from 'src/enums/video.enum';
 import { ApiProperty } from '@nestjs/swagger';
@@ -70,7 +64,6 @@ export class UpdateVideoDto extends PartialType(CreateVideoDto) {
     },
     enum: VideoState,
   })
-  @IsEnum(VideoState)
   @IsNotEmpty()
-  stateVideo: VideoState;
+  stateVideo: boolean;
 }
