@@ -28,19 +28,32 @@ export class VideoService {
     private auditService: AuditService,
   ) {}
 
-  async allVideos(): Promise<OneVideoResponse[]> {
-    const data = clearResVideos(
-      await this.videoModel
-        .find({ stateVideo: true, isDelete: false })
-        .select('-__v'),
-    );
-    for (let i = 0; i < data.length; i++) {
-      const { _id, average } = await this.rankingService.findOne(
-        data[i].idVideo,
+  async allVideos(state: boolean): Promise<OneVideoResponse[]> {
+    if (state) {
+      const data = clearResVideos(
+        await this.videoModel.find({ isDelete: false }).select('-__v'),
       );
-      data[i] = { ...data[i], idRanking: _id.toString(), average };
+      for (let i = 0; i < data.length; i++) {
+        const { _id, average } = await this.rankingService.findOne(
+          data[i].idVideo,
+        );
+        data[i] = { ...data[i], idRanking: _id.toString(), average };
+      }
+      return data;
+    } else {
+      const data = clearResVideos(
+        await this.videoModel
+          .find({ stateVideo: true, isDelete: false })
+          .select('-__v'),
+      );
+      for (let i = 0; i < data.length; i++) {
+        const { _id, average } = await this.rankingService.findOne(
+          data[i].idVideo,
+        );
+        data[i] = { ...data[i], idRanking: _id.toString(), average };
+      }
+      return data;
     }
-    return data;
   }
 
   async create(infoVideo: CreateVideoDto): Promise<VideoResponse> {
@@ -97,7 +110,7 @@ export class VideoService {
       page = 1;
     }
     try {
-      const results = await this.allVideos();
+      const results = await this.allVideos(false);
       return response(results, page, 'video?');
     } catch (error) {
       if (error instanceof HttpException) {
