@@ -86,6 +86,7 @@ export class FiltersService {
             description,
             url,
             stateVideo,
+            image,
             isDelete,
             dateCreate,
           }) => {
@@ -95,6 +96,7 @@ export class FiltersService {
               nameVideo,
               description,
               url,
+              image,
               stateVideo,
               isDelete,
               dateCreate,
