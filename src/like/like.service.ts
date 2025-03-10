@@ -59,7 +59,7 @@ export class LikeService {
       if (!page) {
         page = 1;
       }
-      const results = await this.videoService.allVideos();
+      const results = await this.videoService.allVideos(false);
       const favorites = results.filter(({ usersLike }) =>
         usersLike.includes(idUser),
       );
