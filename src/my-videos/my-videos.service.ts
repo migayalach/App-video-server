@@ -17,7 +17,7 @@ export class MyVideosService {
         page = 1;
       }
       await this.userService.findOne(idUser);
-      const data = await this.videoService.allVideos();
+      const data = await this.videoService.allVideos(true);
       const favoriteList = data?.filter((index) => index.idUser === idUser);
       return response(favoriteList, page, `my-videos/${idUser}?`);
     } catch (error) {
